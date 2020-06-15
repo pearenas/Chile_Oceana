@@ -1,7 +1,7 @@
 ---
-title: "Report"
+title: "Reporte Preliminar Oceana Chile AMP Pisagua"
 author: "Esteban Arenas"
-date: "6/4/2020"
+date: "6/15/2020"
 output: github_document
 ---
 
@@ -9,22 +9,255 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+```{r, echo=FALSE, results='hide', include=FALSE}
+library(bigrquery)
+library(lubridate)
+library(geojsonio)
+library(sf)
+library(tidyverse)
+library(data.table)
+library(dplyr)
+library(ggmap)
+library(maps)
+library(knitr)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+con <- DBI::dbConnect(bigrquery::bigquery(), project = "world-fishing-827", use_legacy_sql = FALSE)
 ```
 
-## Including Plots
+Nada del código corre dentro de este Rmarkdown pero lo incluyo nada más para que se pueda evaluar la metodología. Este es un reporte preliminar que solo muestra el código usado y los resultados obtenidos. Podremos ir modificándolo para llegar a la versión final.
 
-You can also embed plots, for example:
+```{r}
+Chile_VMS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Chile_VMS.csv", header = TRUE)
+RPI_PDF <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/RPI.csv", header = TRUE)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+#We check to see which vessels in the PDF document they gave us are 
+#present in our VMS Chile data
+tmp <- RPI_PDF$RPI %in% Chile_VMS$RPI
+RPI_PDF$VMS_PRESENT <- tmp
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Notamos que la embarcación **"Emilia"** con **RPI:32036** no está presente en nuestros datos VMS de Chile
+La embarcación pesca: Cerco_Anchoveta, Cerco_langostino Enano, Cerco_Medusa, Cerco_Caballa
+
+```{r,echo=FALSE, results='asis'}
+kable(RPI_PDF)
+```
+
+Luego seleccionamos únicamente las embarcaciones listadas en el PDF de la base de datos VMS
+
+```{r}
+#We check to see which vessels in our VMS data are represented in the PDF document they gave us
+tmp2 <- Chile_VMS$RPI %in% RPI_PDF$RPI
+Chile_VMS$VMS_PRESENT <- tmp2
+```
+
+```{r,echo=FALSE, results='asis'}
+kable(Chile_VMS)
+```
+
+```{r}
+#Escoger solo embarcaciones dentro del PDF que enviaron
+Tmp <- copy(Chile_VMS)
+Tmp <- Tmp[Tmp$VMS_PRESENT == "TRUE",]
+#Select only these vessels in Big Query
+Tmp$Nave <- gsub( " ", "", Tmp$Nave)
+#write.csv(Tmp, file = "Chile_Desired_Ind_Vessels.csv")
+```
+
+El archivo que se ve abajo es exportado y manualmente se le quitan las "Ñ" y acentos.
+
+```{r,echo=FALSE, results='asis'}
+kable(Tmp)
+```
+
+La base de arriba después se sube a Big Query y es una de las bases que corre el query de abajo para dar todas las embarcaciones VMS
+Chile que estén dentro del PDF que nos dio Oceana Chile
+
+```{mysql connection = con, output.var = "PDF_Vessels_2020", eval=FALSE}
+SELECT seg_id,shipname,timestamp,lat,lon,speed,ssvid,callsign,source,n_shipname,nnet_score
+FROM `world-fishing-827.pipe_chile_production_v20200331.messages_scored_*`
+INNER JOIN `world-fishing-827.scratch_Esteban.Chile_Desired_Ind_Vessels`
+  ON `world-fishing-827.pipe_chile_production_v20200331.messages_scored_*`.n_shipname = `world-fishing-827.scratch_Esteban.Chile_Desired_Ind_Vessels`.Nave
+```
+
+PDF_Vessels_2020 es la base de datos que se obtiene del query y el resto del proceso se explica en los comentarios del código
+
+```{r, eval=FALSE, echo=TRUE}
+PDF_Vessels_Total <- copy(PDF_Vessels_2020)
+#Order by n_shipname and then timestamp
+PDF_Vessels_Total <- PDF_Vessels_Total[with(PDF_Vessels_Total, order(n_shipname, timestamp)),]
+#Calculate time in between timestamps
+#Convert timestamp to epoch seconds
+PDF_Vessels_Total$EpochSec <- as.integer(as.POSIXct(PDF_Vessels_Total$timestamp))
+#Converting back to date to make sure epoch is correct
+#as_datetime(PDF_Vessels_Total$EpochSec[2])
+#Adding phased Epoch second vectors to calculate hours between consecutive rows
+EpochA <- PDF_Vessels_Total$EpochSec[1:nrow(PDF_Vessels_Total)-1]
+EpochB <- PDF_Vessels_Total$EpochSec[2:nrow(PDF_Vessels_Total)]
+#Adding column with hours between consecutive rows
+Tmp <- (EpochB-EpochA)/3600
+Tmp <- append(Tmp,0)
+PDF_Vessels_Total$Hrs_Diff <- Tmp
+
+#Create a mask to mark as 0 all Hrs_Diff that are not
+#between consecutive rows of the same segment ID
+segA <- PDF_Vessels_Total$seg_id[1:nrow(PDF_Vessels_Total)-1]
+segB <- PDF_Vessels_Total$seg_id[2:nrow(PDF_Vessels_Total)]
+#Mask Hours in between same segments
+MaskSameSegId <- segA == segB
+MaskSameSegId <- append(MaskSameSegId,FALSE)
+Tmp[!MaskSameSegId] <- 0
+PDF_Vessels_Total$Hrs_Diff <- Tmp
+
+#Creating a Mask and column for fishing hours
+NetScoreA <- PDF_Vessels_Total$nnet_score[1:nrow(PDF_Vessels_Total)-1]
+NetScoreB <- PDF_Vessels_Total$nnet_score[2:nrow(PDF_Vessels_Total)]
+#Mask Fishing Hours
+#Net Scores of 0 are treated as scores of 0
+MaskFishingHours <- NetScoreA == 1 & NetScoreB == 1
+MaskFishingHours <- append(MaskFishingHours,FALSE)
+MaskFishingHours[is.na(MaskFishingHours)] <- FALSE
+Tmp <- copy(PDF_Vessels_Total$Hrs_Diff)
+Tmp[!MaskFishingHours] <- 0
+PDF_Vessels_Total$FishingHours <- Tmp
+
+#Resulting file is exported, clipped in QGIS according to each region,
+#This file includes fishing hours for all VMS Chile vessels. Around 8 million rows
+write.csv(PDF_Vessels_Total, file = "PDF_Vessels_Total.csv")
+```
+
+**"PDF_Vessels_Total.csv"** is exported and clipped in QGIS according to each region. This file includes fishing hours for all VMS Chile vessels. Around 8 million rows
+
+Clipped versions of the file, according to polygons of interest, are then imported below: Tarapacá, Pisagua, Ventana 5, 6 y 7
+
+```{r, echo=TRUE}
+#And then imported once again as the files below
+##### 1.) TARAPACA
+Vessels_Clip_Tarapaca <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Vessels_Clip_Tarapaca.csv", header = TRUE)
+
+#Aggregate by vessel, adding fishing hours
+Tarapaca_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_Tarapaca, sum))
+#Export final list of vessels and associated fishing hours within
+#Tarapaca region
+
+##write.csv(Tarapaca_FH, file = "Tarapaca_Horas_de_Pesca.csv")
+```
+
+Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
+
+**Tarapacá**
+
+```{r,echo=FALSE, results='asis'}
+kable(Tarapaca_FH)
+```
+
+```{r, echo=TRUE}
+##### 2.) PISAGUA
+Vessels_Clip_Pisagua <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Vessels_Clip_Pisagua.csv", header = TRUE)
+
+#Aggregate by vessel, adding fishing hours
+Pisagua_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_Pisagua, sum))
+#Export final list of vessels and associated fishing hours within
+#Pisagua MPA
+
+##write.csv(Pisagua_FH, file = "Pisagua_Horas_de_Pesca.csv")
+```
+
+**Pisagua**
+
+```{r,echo=FALSE, results='asis'}
+kable(Pisagua_FH)
+```
+
+```{r, echo=TRUE}
+##### 3.) Ventana 5
+Vessels_Clip_V5 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Vessels_Clip_V5.csv", header = TRUE)
+
+#Aggregate by vessel, adding fishing hours
+V5_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V5, sum))
+#Export final list of vessels and associated fishing hours within
+#Ventana 5
+
+##write.csv(V5_FH, file = "V5_Horas_de_Pesca.csv")
+```
+
+**Ventana 5**
+
+```{r,echo=FALSE, results='asis'}
+kable(V5_FH)
+```
+
+```{r, echo=TRUE}
+##### 4.) Ventana 6
+Vessels_Clip_V6 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Vessels_Clip_V6.csv", header = TRUE)
+
+#Aggregate by vessel, adding fishing hours
+V6_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V6, sum))
+#Export final list of vessels and associated fishing hours within
+#Ventana 6
+
+##write.csv(V6_FH, file = "V6_Horas_de_Pesca.csv")
+```
+
+**Ventana 6**
+
+```{r,echo=FALSE, results='asis'}
+kable(V6_FH)
+```
+
+```{r, echo=TRUE}
+##### 5.) Ventana 7
+Vessels_Clip_V7 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Vessels_Clip_V7.csv", header = TRUE)
+
+#Aggregate by vessel, adding fishing hours
+V7_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V7, sum))
+#Export final list of vessels and associated fishing hours within
+#Ventana 7
+
+##write.csv(V7_FH, file = "V7_Horas_de_Pesca.csv")
+```
+
+**Ventana 7**
+
+```{r,echo=FALSE, results='asis'}
+kable(V7_FH)
+```
+
+Generar el mapa de esfuerzo pesquero por hora en décimas de grados Lat y Lon
+
+```{r, echo=TRUE}
+#Graphing Fishing Effort Hours for the "Vessels_Clip_Tarapaca" DB
+#by grouping fishing hours into lat and lon hundreth bins
+Vessels_Clip_Tarapaca$LatBin <- (floor(Vessels_Clip_Tarapaca$lat * 10)/10)
+Vessels_Clip_Tarapaca$LonBin <- (floor(Vessels_Clip_Tarapaca$lon * 10)/10)
+FishingHoursGraph <- data.frame(aggregate(FishingHours ~ LatBin + LonBin, Vessels_Clip_Tarapaca, sum))
+###Mapa
+#Bajar los archivos JSON con los polígonos de interés
+#Pisagua
+Pisagua_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/Pisagua.geojson")
+#Tarapacá
+Tarapaca_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/TarapacaPoly.geojson")
+#Ventana 5
+Ventana5_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP5gj.geojson")
+#Ventana 6
+Ventana6_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP6gj.geojson")
+#Ventana 7
+Ventana7_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP7intersectgj.geojson")
+```
+
+```{r, echo=TRUE}
+world <- map_data("world")
+MapTest <- ggplot() + geom_polygon(data = world, aes(x=long, y = lat, group = group)) + coord_fixed(1.3) +
+  geom_raster(data = FishingHoursGraph, aes(x = LonBin, y = LatBin, fill = FishingHours), alpha = 0.5) +
+  scale_fill_gradient(low = "blue", high = "red")+
+  labs(fill = "Hours", title = "Fishing Hours per area", x = 'Longitude', y = 'Latitude') +
+  geom_sf(data=Tarapaca_ST, fill=NA, color="blue")+geom_sf(data=Pisagua_ST, fill=NA, color="red")+
+  geom_sf(data=Ventana5_ST, fill=NA, color="green")+geom_sf(data=Ventana6_ST, fill=NA, color="violet")+
+  geom_sf(data=Ventana7_ST, fill=NA, color="yellow")+ coord_sf(xlim = c(-74, -69.8), ylim = c(-22, -18.6), expand = FALSE)
+  
+ 
+MapTest + theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+```
+
