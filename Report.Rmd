@@ -20,6 +20,9 @@ library(dplyr)
 library(ggmap)
 library(maps)
 library(knitr)
+library(fishwatchr)
+library(extrafont)
+loadfonts()
 
 con <- DBI::dbConnect(bigrquery::bigquery(), project = "world-fishing-827", use_legacy_sql = FALSE)
 ```
@@ -224,14 +227,25 @@ V7_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V7, 
 kable(V7_FH)
 ```
 
-Generar el mapa de esfuerzo pesquero por hora en décimas de grados Lat y Lon
+Agrupar los datos por décimas de grados Lat y Lon, sumar horas totales de actividad y horas de pesca
+También se bajan los archivos JSON con los polígonos de interes que irán en los mapas
 
 ```{r, echo=TRUE}
 #Graphing Fishing Effort Hours for the "Vessels_Clip_Tarapaca" DB
 #by grouping fishing hours into lat and lon hundreth bins
-Vessels_Clip_Tarapaca$LatBin <- (floor(Vessels_Clip_Tarapaca$lat * 10)/10)
-Vessels_Clip_Tarapaca$LonBin <- (floor(Vessels_Clip_Tarapaca$lon * 10)/10)
+Vessels_Clip_Tarapaca$LatBin <- (floor(Vessels_Clip_Tarapaca$lat * 100)/100)
+Vessels_Clip_Tarapaca$LonBin <- (floor(Vessels_Clip_Tarapaca$lon * 100)/100)
+#Fishing hours Graph
 FishingHoursGraph <- data.frame(aggregate(FishingHours ~ LatBin + LonBin, Vessels_Clip_Tarapaca, sum))
+#Se quitan 2 lineas (outliers) de valores de 210 y 70.8 para que el mapa 
+#muestre resultados útiles
+FishingHoursGraph <- FishingHoursGraph[which(FishingHoursGraph$FishingHours < 70),]
+#Total Hours Graph
+TotalHoursGraph <- data.frame(aggregate(Hrs_Diff ~ LatBin + LonBin, Vessels_Clip_Tarapaca, sum))
+#Se quitan 58 lineas (outliers) de valores > 50 (.176% de los datos) para que el mapa 
+#muestre resultados útiles
+TotalHoursGraph <- TotalHoursGraph[which(TotalHoursGraph$Hrs_Diff < 50),]
+
 ###Mapa
 #Bajar los archivos JSON con los polígonos de interés
 #Pisagua
@@ -246,18 +260,95 @@ Ventana6_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_
 Ventana7_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP7intersectgj.geojson")
 ```
 
-```{r, echo=TRUE}
-world <- map_data("world")
-MapTest <- ggplot() + geom_polygon(data = world, aes(x=long, y = lat, group = group)) + coord_fixed(1.3) +
-  geom_raster(data = FishingHoursGraph, aes(x = LonBin, y = LatBin, fill = FishingHours), alpha = 0.5) +
-  scale_fill_gradient(low = "blue", high = "red")+
-  labs(fill = "Hours", title = "Fishing Hours per area", x = 'Longitude', y = 'Latitude') +
-  geom_sf(data=Tarapaca_ST, fill=NA, color="blue")+geom_sf(data=Pisagua_ST, fill=NA, color="red")+
-  geom_sf(data=Ventana5_ST, fill=NA, color="green")+geom_sf(data=Ventana6_ST, fill=NA, color="violet")+
-  geom_sf(data=Ventana7_ST, fill=NA, color="yellow")+ coord_sf(xlim = c(-74, -69.8), ylim = c(-22, -18.6), expand = FALSE)
-  
- 
-MapTest + theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+Generar el mapa de esfuerzo pesquero por horas de pesca de acuerdo a décimas de grados Lat y Lon
+
+```{r, eval=TRUE, echo=TRUE}
+# GFW logo
+gfw_logo <- png::readPNG("/Users/Esteban/Documents/Jobs/GFW/General/Logo/GFW_logo_primary_White.png")
+gfw_logo_rast <- grid::rasterGrob(gfw_logo, interpolate = T)
+
+#Map
+land_sf <- rnaturalearth::ne_countries(scale = 10, returnclass = 'sf')
+MapTest <- ggplot() + 
+  geom_sf(data = land_sf,
+            fill = fishwatchr::gfw_palettes$map_country_dark[1],
+            color = fishwatchr::gfw_palettes$map_country_dark[2],
+          size=.1) +
+    scale_fill_gradientn(colours = fishwatchr::gfw_palettes$map_effort_dark)+
+  fishwatchr::theme_gfw_map(theme = 'dark')+
+  geom_tile(data = FishingHoursGraph, aes(x = LonBin, y = LatBin, fill = FishingHours), alpha = 0.5)+
+  labs(fill = "Horas", title = "Horas de Pesca por Área")+
+  geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
+  geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
+  geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
+  coord_sf(xlim = c(-74, -69.8), ylim = c(-22, -18.6))+
+  #Add GFW logo
+  annotation_custom(gfw_logo_rast,
+                      ymin = -21.95,
+                      ymax = -21.53,
+                      xmin = -73.8,
+                      xmax = -72.6)
+MapTest
+
+```
+
+El mismo mapa de arriba pero enfocado en Pisagua y las tres ventanas
+
+```{r, eval=TRUE,echo=TRUE}
+#Zoomed in Pisagua fishing hours map
+MapTest2 <- MapTest + coord_sf(xlim = c(-70.5, -70.1), ylim = c(-19.87, -19.3))+
+    #Add GFW logo
+  annotation_custom(gfw_logo_rast,
+                      ymin = -19.35,
+                      ymax = -19.3,
+                      xmin = -70.2,
+                      xmax = -70.1)
+MapTest2
+
+```
+
+Generar el mapa de actividad total en horas (pesca y no pesca) de acuerdo a décimas de grados Lat y Lon
+
+```{r, eval=TRUE, echo=TRUE}
+#Map Total Hours
+land_sf <- rnaturalearth::ne_countries(scale = 10, returnclass = 'sf')
+MapTestHrsTotal <- ggplot() + 
+  geom_sf(data = land_sf,
+            fill = fishwatchr::gfw_palettes$map_country_dark[1],
+            color = fishwatchr::gfw_palettes$map_country_dark[2],
+          size=.1) +
+#    scale_fill_gradientn(colours = fishwatchr::gfw_palettes$map_presence_dark)+
+    scale_fill_gradientn(colours = c('#0c276c', '#1253a8', '#1588cc', '#14c0e4', '#00ffc3','#ffffff'))+
+
+  fishwatchr::theme_gfw_map(theme = 'dark')+
+  geom_tile(data = TotalHoursGraph, aes(x = LonBin, y = LatBin, fill = Hrs_Diff), alpha = 0.5)+
+  labs(fill = "Horas", title = "Horas Totales por Área")+
+  geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
+  geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
+  geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
+  coord_sf(xlim = c(-74, -69.8), ylim = c(-22, -18.6))+
+  #Add GFW logo
+  annotation_custom(gfw_logo_rast,
+                      ymin = -21.95,
+                      ymax = -21.53,
+                      xmin = -73.8,
+                      xmax = -72.6)
+MapTestHrsTotal
+
+```
+
+El mismo mapa de arriba pero enfocado en Pisagua y las tres ventanas
+
+```{r, eval=TRUE,echo=TRUE}
+#Zoomed in Pisagua total hours map
+MapTestHrsTotal2 <- MapTestHrsTotal + coord_sf(xlim = c(-70.5, -70.1), ylim = c(-19.87, -19.3))+
+    #Add GFW logo
+  annotation_custom(gfw_logo_rast,
+                      ymin = -19.35,
+                      ymax = -19.3,
+                      xmin = -70.2,
+                      xmax = -70.1)
+MapTestHrsTotal2
+
 ```
 
