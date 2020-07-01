@@ -230,7 +230,7 @@ kable(V7_FH)
 Agrupar los datos por décimas de grados Lat y Lon, sumar horas totales de actividad y horas de pesca
 También se bajan los archivos JSON con los polígonos de interes que irán en los mapas
 
-```{r, echo=TRUE}
+```{r, echo=TRUE,results='hide'}
 #Graphing Fishing Effort Hours for the "Vessels_Clip_Tarapaca" DB
 #by grouping fishing hours into lat and lon hundreth bins
 Vessels_Clip_Tarapaca$LatBin <- (floor(Vessels_Clip_Tarapaca$lat * 100)/100)
