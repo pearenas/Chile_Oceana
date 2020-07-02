@@ -1,4 +1,4 @@
-Reporte Preliminar Oceana Chile AMP Pisagua
+Reporte VMS Preliminar Oceana Chile AMP Pisagua
 ================
 Esteban Arenas
 6/15/2020
@@ -557,7 +557,7 @@ PDF_Vessels_Total$Hrs_Diff <- Tmp
 NetScoreA <- PDF_Vessels_Total$nnet_score[1:nrow(PDF_Vessels_Total)-1]
 NetScoreB <- PDF_Vessels_Total$nnet_score[2:nrow(PDF_Vessels_Total)]
 #Mask Fishing Hours
-#Net Scores of 0 are treated as scores of 0
+#Net Scores of NA are treated as scores of 0
 MaskFishingHours <- NetScoreA == 1 & NetScoreB == 1
 MaskFishingHours <- append(MaskFishingHours,FALSE)
 MaskFishingHours[is.na(MaskFishingHours)] <- FALSE
@@ -584,7 +584,8 @@ Vessels_Clip_Tarapaca <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/
 
 #Aggregate by vessel, adding fishing hours
 Tarapaca_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_Tarapaca, sum))
-#Export final list of vessels and associated fishing hours within
+Tarapaca_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_Tarapaca, sum))
+#Export final list of vessels and associated hours within
 #Tarapaca region
 
 ##write.csv(Tarapaca_FH, file = "Tarapaca_Horas_de_Pesca.csv")
@@ -593,6 +594,8 @@ Tarapaca_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Cli
 Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
 
 **Tarapacá**
+
+Horas de Pesca
 
 | shipname                       | ssvid                            | FishingHours |
 | :----------------------------- | :------------------------------- | -----------: |
@@ -644,19 +647,74 @@ Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
 | HURACAN (IND)                  | f4af5c6c6b05b6e76937b6e6eff63d13 |     504.9697 |
 | ANGAMOS 9 (IND)                | f50e7f8a15a4aa2e2931b72749681f72 |     268.3386 |
 
+Horas Totales
+
+| shipname                       | ssvid                            |  Hrs\_Diff |
+| :----------------------------- | :------------------------------- | ---------: |
+| DON GINO (IND)                 | 009f555f2a4523e8f25b51c10a2d4afd |  8506.3189 |
+| BARRACUDA IV (IND)             | 010eae4f71f823055aba0097c17f48a2 |  9246.1825 |
+| EPERVA 51 (IND)                | 05fe3d97e97aae317a06d1db2dab4cec |  2452.7431 |
+| COLLEN (IND)                   | 07946c6c27e325d71496283118ac469b |  5774.9833 |
+| EPERVA 49 (IND)                | 195c1759c59d14f5513f080354507e2c |  2251.4667 |
+| SAN JORGE I (IND)              | 1ae5ea3515cdd6918c4787afa20c12e2 |   880.9333 |
+| TRUENO I (IND)                 | 1d5723e49e22d01b586452b7a70c6850 |  1970.5139 |
+| EPERVA 62 (IND)                | 261841142b07a6a42f87f6bfa8d299e8 |  2964.7261 |
+| EPERVA 66 (IND)                | 34050a8ab7c93a7f7d4b774991ad8cfe |  8624.0864 |
+| PUCARA (IND)                   | 3684b47011856bbff50058140e3fc034 |  2819.0433 |
+| ANGAMOS 3 (IND)                | 3c42f58b263bae0411a250ec361af6bd |  9241.0439 |
+| EPERVA 65 (IND)                | 489f8567c3781ee3eeeb8d80860db227 |  9375.0133 |
+| LOA 7 (IND)                    | 4a9c06e32670db8fa44b4263898c7028 |  5656.2025 |
+| TORNADO (IND)                  | 4afeb365e004e211b9f4f75992ac826d |  7260.6181 |
+| EPERVA 56 (IND)                | 6acebfc5e0f92a96cc46875b41ec40ce |  2983.9606 |
+| EPERVA 64 (IND)                | 72bc3105416da385900d739e31998528 |  5808.9153 |
+| AUDAZ (IND)                    | 7411a8426ee41f309143803adf6b4265 |  3128.9703 |
+| ANGAMOS 1 (IND)                | 78aff522f0aec7c88b1817ffacc8c7d3 | 10118.6042 |
+| EPERVA 61 (IND)                | 7a1b005e7034b97646a006680ef64134 |  3184.2322 |
+| MERO (IND)                     | 7ca7fb3dc020a763d65cdf653c66d46d |  8417.8208 |
+| ATACAMA V (IND)                | 81234a9a555105f9362a6324f1b3b940 |  4355.3567 |
+| HALCON (IND)                   | 8c06283b95f004b9bb9d51f0826d0872 |  2540.8356 |
+| COSTA GRANDE 1 (IND)           | 8e61b2dea7fc95e8dd7268e4a4913f6d |  5470.1239 |
+| ALERCE (IND)                   | 9921d0ac5e1d5bdc41399c53791cc581 |  2363.1333 |
+| MARLIN (IND)                   | 9bb82acbaf91f57e1ec4e4851046a69e |  8377.5036 |
+| RELAMPAGO (IND)                | a805a0a8aff4229a31b3afbef9fa5fd0 |  8562.2653 |
+| LOA 2 (IND)                    | b159b1dfe41e78c15fb8711382cb2bc7 |  5831.7725 |
+| ICALMA (IND)                   | b4f4ed43998c7eb95e0414618587deec |  3033.0794 |
+| AVENTURERO (IND)               | b96b75aaef8e0d999ccc681c592b2ab6 |  8638.4886 |
+| CLAUDIA ALEJANDRA (IND)        | c15aeaa1abe00a4048adb1fc154dd9a2 |  5140.3317 |
+| CORPESCA 2 (IND)               | c832c2f2930755ec8890204819c9a146 |  9069.7225 |
+| BANDURRIA (IND)                | c8c8da459d1e759caca82e9a7e6b84ee |  2205.9867 |
+| ANGAMOS 4 (IND)                | cd73596de544cdad5167de0bec0e9600 |  2325.3519 |
+| LICANTEN (IND)                 | cea8889cfc62653656c617be12f9ecbf |  4845.5836 |
+| LOA 1 (IND)                    | d16646c187a936037d86112c1a489f6d |  6017.1069 |
+| CAMIÑA (IND)                   | d2e64ca90a91ff56e838d082479627c3 |  1433.2281 |
+| ANGAMOS 2 (IND)                | d86e4d54e644ecb0af062f6d592320b2 |  2461.3361 |
+| INTREPIDO (IND)                | d8ab179497077a5f41280ff43c5b0729 |  2433.1919 |
+| ATACAMA IV (IND)               | db1bcc6dda7aebc958cb4d57083ddc10 |  5911.2331 |
+| SAN JORGE I (IND)              | dbcacd5c3136c64d52d353d3506462ed |  1554.1183 |
+| SALMON (IND)                   | dc78e67c8916f8e6fb0ec92eabd36f16 |  8336.5392 |
+| ALBIMER (IND)                  | de79fac70dcebbc2db1f63a978729012 |  3936.0003 |
+| BLANQUILLO (IND)               | df696a559c06bf4493f3df2b91b591bb |  7990.0553 |
+| PARINA I (IND)                 | e20f11999c8d625855b6621940fba62b |  3316.4714 |
+| DON ERNESTO AYALA MARFIL (IND) | e69fb1df1c47000ae3508ae866b3a037 |  3175.2547 |
+| HURACAN (IND)                  | f4af5c6c6b05b6e76937b6e6eff63d13 |  9723.7886 |
+| ANGAMOS 9 (IND)                | f50e7f8a15a4aa2e2931b72749681f72 |  2607.6036 |
+
 ``` r
 ##### 2.) PISAGUA
 Vessels_Clip_Pisagua <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Vessels_Clip_Pisagua.csv", header = TRUE)
 
 #Aggregate by vessel, adding fishing hours
 Pisagua_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_Pisagua, sum))
-#Export final list of vessels and associated fishing hours within
+Pisagua_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_Pisagua, sum))
+#Export final list of vessels and associated hours within
 #Pisagua MPA
 
 ##write.csv(Pisagua_FH, file = "Pisagua_Horas_de_Pesca.csv")
 ```
 
 **Pisagua**
+
+Horas de Pesca
 
 | shipname                       | ssvid                            | FishingHours |
 | :----------------------------- | :------------------------------- | -----------: |
@@ -708,19 +766,74 @@ Pisagua_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip
 | HURACAN (IND)                  | f4af5c6c6b05b6e76937b6e6eff63d13 |   78.2855556 |
 | ANGAMOS 9 (IND)                | f50e7f8a15a4aa2e2931b72749681f72 |   41.7319444 |
 
+Horas Totales
+
+| shipname                       | ssvid                            | Hrs\_Diff |
+| :----------------------------- | :------------------------------- | --------: |
+| DON GINO (IND)                 | 009f555f2a4523e8f25b51c10a2d4afd | 111.90056 |
+| BARRACUDA IV (IND)             | 010eae4f71f823055aba0097c17f48a2 | 226.33667 |
+| EPERVA 51 (IND)                | 05fe3d97e97aae317a06d1db2dab4cec | 167.24333 |
+| COLLEN (IND)                   | 07946c6c27e325d71496283118ac469b | 169.41667 |
+| EPERVA 49 (IND)                | 195c1759c59d14f5513f080354507e2c | 137.46667 |
+| SAN JORGE I (IND)              | 1ae5ea3515cdd6918c4787afa20c12e2 |  49.66667 |
+| TRUENO I (IND)                 | 1d5723e49e22d01b586452b7a70c6850 | 165.52528 |
+| EPERVA 62 (IND)                | 261841142b07a6a42f87f6bfa8d299e8 | 246.41806 |
+| EPERVA 66 (IND)                | 34050a8ab7c93a7f7d4b774991ad8cfe | 275.66694 |
+| PUCARA (IND)                   | 3684b47011856bbff50058140e3fc034 | 187.31889 |
+| ANGAMOS 3 (IND)                | 3c42f58b263bae0411a250ec361af6bd | 213.11417 |
+| EPERVA 65 (IND)                | 489f8567c3781ee3eeeb8d80860db227 | 195.65250 |
+| LOA 7 (IND)                    | 4a9c06e32670db8fa44b4263898c7028 | 188.81667 |
+| TORNADO (IND)                  | 4afeb365e004e211b9f4f75992ac826d | 234.32806 |
+| EPERVA 56 (IND)                | 6acebfc5e0f92a96cc46875b41ec40ce | 294.03917 |
+| EPERVA 64 (IND)                | 72bc3105416da385900d739e31998528 | 171.63472 |
+| AUDAZ (IND)                    | 7411a8426ee41f309143803adf6b4265 | 188.37222 |
+| ANGAMOS 1 (IND)                | 78aff522f0aec7c88b1817ffacc8c7d3 | 149.78361 |
+| EPERVA 61 (IND)                | 7a1b005e7034b97646a006680ef64134 | 185.93111 |
+| MERO (IND)                     | 7ca7fb3dc020a763d65cdf653c66d46d | 198.62139 |
+| ATACAMA V (IND)                | 81234a9a555105f9362a6324f1b3b940 | 165.31667 |
+| HALCON (IND)                   | 8c06283b95f004b9bb9d51f0826d0872 |  83.23917 |
+| COSTA GRANDE 1 (IND)           | 8e61b2dea7fc95e8dd7268e4a4913f6d | 180.35000 |
+| ALERCE (IND)                   | 9921d0ac5e1d5bdc41399c53791cc581 | 100.66667 |
+| MARLIN (IND)                   | 9bb82acbaf91f57e1ec4e4851046a69e | 151.06778 |
+| RELAMPAGO (IND)                | a805a0a8aff4229a31b3afbef9fa5fd0 | 171.75556 |
+| LOA 2 (IND)                    | b159b1dfe41e78c15fb8711382cb2bc7 | 157.03333 |
+| ICALMA (IND)                   | b4f4ed43998c7eb95e0414618587deec | 283.15056 |
+| AVENTURERO (IND)               | b96b75aaef8e0d999ccc681c592b2ab6 | 197.85500 |
+| CLAUDIA ALEJANDRA (IND)        | c15aeaa1abe00a4048adb1fc154dd9a2 | 226.25333 |
+| CORPESCA 2 (IND)               | c832c2f2930755ec8890204819c9a146 | 218.51417 |
+| BANDURRIA (IND)                | c8c8da459d1e759caca82e9a7e6b84ee | 124.38639 |
+| ANGAMOS 4 (IND)                | cd73596de544cdad5167de0bec0e9600 | 180.93750 |
+| LICANTEN (IND)                 | cea8889cfc62653656c617be12f9ecbf | 155.78361 |
+| LOA 1 (IND)                    | d16646c187a936037d86112c1a489f6d | 174.05000 |
+| CAMIÑA (IND)                   | d2e64ca90a91ff56e838d082479627c3 |  37.98306 |
+| ANGAMOS 2 (IND)                | d86e4d54e644ecb0af062f6d592320b2 | 251.31389 |
+| INTREPIDO (IND)                | d8ab179497077a5f41280ff43c5b0729 | 172.76500 |
+| ATACAMA IV (IND)               | db1bcc6dda7aebc958cb4d57083ddc10 | 204.00000 |
+| SAN JORGE I (IND)              | dbcacd5c3136c64d52d353d3506462ed |  46.13444 |
+| SALMON (IND)                   | dc78e67c8916f8e6fb0ec92eabd36f16 | 173.63611 |
+| ALBIMER (IND)                  | de79fac70dcebbc2db1f63a978729012 | 214.93333 |
+| BLANQUILLO (IND)               | df696a559c06bf4493f3df2b91b591bb | 170.78389 |
+| PARINA I (IND)                 | e20f11999c8d625855b6621940fba62b | 187.50333 |
+| DON ERNESTO AYALA MARFIL (IND) | e69fb1df1c47000ae3508ae866b3a037 | 214.83250 |
+| HURACAN (IND)                  | f4af5c6c6b05b6e76937b6e6eff63d13 | 248.65167 |
+| ANGAMOS 9 (IND)                | f50e7f8a15a4aa2e2931b72749681f72 | 220.86556 |
+
 ``` r
 ##### 3.) Ventana 5
 Vessels_Clip_V5 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Vessels_Clip_V5.csv", header = TRUE)
 
 #Aggregate by vessel, adding fishing hours
 V5_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V5, sum))
-#Export final list of vessels and associated fishing hours within
+V5_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_V5, sum))
+#Export final list of vessels and associated hours within
 #Ventana 5
 
 ##write.csv(V5_FH, file = "V5_Horas_de_Pesca.csv")
 ```
 
 **Ventana 5**
+
+Horas de Pesca
 
 | shipname                | ssvid                            | FishingHours |
 | :---------------------- | :------------------------------- | -----------: |
@@ -733,19 +846,35 @@ V5_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V5, 
 | LOA 1 (IND)             | d16646c187a936037d86112c1a489f6d |            0 |
 | ALBIMER (IND)           | de79fac70dcebbc2db1f63a978729012 |            0 |
 
+Horas Totales
+
+| shipname                | ssvid                            | Hrs\_Diff |
+| :---------------------- | :------------------------------- | --------: |
+| BARRACUDA IV (IND)      | 010eae4f71f823055aba0097c17f48a2 | 0.7913889 |
+| COLLEN (IND)            | 07946c6c27e325d71496283118ac469b | 0.9333333 |
+| EPERVA 56 (IND)         | 6acebfc5e0f92a96cc46875b41ec40ce | 0.5377778 |
+| ATACAMA V (IND)         | 81234a9a555105f9362a6324f1b3b940 | 0.2666667 |
+| CLAUDIA ALEJANDRA (IND) | c15aeaa1abe00a4048adb1fc154dd9a2 | 0.1333333 |
+| LICANTEN (IND)          | cea8889cfc62653656c617be12f9ecbf | 1.4833333 |
+| LOA 1 (IND)             | d16646c187a936037d86112c1a489f6d | 0.4000000 |
+| ALBIMER (IND)           | de79fac70dcebbc2db1f63a978729012 | 0.6666667 |
+
 ``` r
 ##### 4.) Ventana 6
 Vessels_Clip_V6 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Vessels_Clip_V6.csv", header = TRUE)
 
 #Aggregate by vessel, adding fishing hours
 V6_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V6, sum))
-#Export final list of vessels and associated fishing hours within
+V6_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_V6, sum))
+#Export final list of vessels and associated hours within
 #Ventana 6
 
 ##write.csv(V6_FH, file = "V6_Horas_de_Pesca.csv")
 ```
 
 **Ventana 6**
+
+Fishing Hours
 
 | shipname         | ssvid                            | FishingHours |
 | :--------------- | :------------------------------- | -----------: |
@@ -768,13 +897,37 @@ V6_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V6, 
 | HURACAN (IND)    | f4af5c6c6b05b6e76937b6e6eff63d13 |            0 |
 | ANGAMOS 9 (IND)  | f50e7f8a15a4aa2e2931b72749681f72 |            0 |
 
+Total Hours
+
+| shipname         | ssvid                            | Hrs\_Diff |
+| :--------------- | :------------------------------- | --------: |
+| EPERVA 49 (IND)  | 195c1759c59d14f5513f080354507e2c | 0.1333333 |
+| EPERVA 66 (IND)  | 34050a8ab7c93a7f7d4b774991ad8cfe | 0.0388889 |
+| EPERVA 65 (IND)  | 489f8567c3781ee3eeeb8d80860db227 | 0.0669444 |
+| LOA 7 (IND)      | 4a9c06e32670db8fa44b4263898c7028 | 0.1000000 |
+| TORNADO (IND)    | 4afeb365e004e211b9f4f75992ac826d | 0.1050000 |
+| MERO (IND)       | 7ca7fb3dc020a763d65cdf653c66d46d | 0.1263889 |
+| MARLIN (IND)     | 9bb82acbaf91f57e1ec4e4851046a69e | 0.0758333 |
+| ICALMA (IND)     | b4f4ed43998c7eb95e0414618587deec | 0.2502778 |
+| BANDURRIA (IND)  | c8c8da459d1e759caca82e9a7e6b84ee | 0.2666667 |
+| LICANTEN (IND)   | cea8889cfc62653656c617be12f9ecbf | 0.1333333 |
+| LOA 1 (IND)      | d16646c187a936037d86112c1a489f6d | 0.1333333 |
+| CAMIÑA (IND)     | d2e64ca90a91ff56e838d082479627c3 | 0.1305556 |
+| ANGAMOS 2 (IND)  | d86e4d54e644ecb0af062f6d592320b2 | 0.0386111 |
+| ATACAMA IV (IND) | db1bcc6dda7aebc958cb4d57083ddc10 | 0.2666667 |
+| SALMON (IND)     | dc78e67c8916f8e6fb0ec92eabd36f16 | 0.2675000 |
+| ALBIMER (IND)    | de79fac70dcebbc2db1f63a978729012 | 0.5333333 |
+| HURACAN (IND)    | f4af5c6c6b05b6e76937b6e6eff63d13 | 0.1897222 |
+| ANGAMOS 9 (IND)  | f50e7f8a15a4aa2e2931b72749681f72 | 0.0833333 |
+
 ``` r
 ##### 5.) Ventana 7
 Vessels_Clip_V7 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Vessels_Clip_V7.csv", header = TRUE)
 
 #Aggregate by vessel, adding fishing hours
 V7_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V7, sum))
-#Export final list of vessels and associated fishing hours within
+V7_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_V7, sum))
+#Export final list of vessels and associated hours within
 #Ventana 7
 
 ##write.csv(V7_FH, file = "V7_Horas_de_Pesca.csv")
@@ -782,12 +935,23 @@ V7_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V7, 
 
 **Ventana 7**
 
+Fishing Hours
+
 | shipname      | ssvid                            | FishingHours |
 | :------------ | :------------------------------- | -----------: |
 | COLLEN (IND)  | 07946c6c27e325d71496283118ac469b |            0 |
 | LOA 7 (IND)   | 4a9c06e32670db8fa44b4263898c7028 |            0 |
 | LOA 2 (IND)   | b159b1dfe41e78c15fb8711382cb2bc7 |            0 |
 | ALBIMER (IND) | de79fac70dcebbc2db1f63a978729012 |            0 |
+
+Total Hours
+
+| shipname      | ssvid                            | Hrs\_Diff |
+| :------------ | :------------------------------- | --------: |
+| COLLEN (IND)  | 07946c6c27e325d71496283118ac469b |  0.400000 |
+| LOA 7 (IND)   | 4a9c06e32670db8fa44b4263898c7028 |  4.266667 |
+| LOA 2 (IND)   | b159b1dfe41e78c15fb8711382cb2bc7 |  5.200000 |
+| ALBIMER (IND) | de79fac70dcebbc2db1f63a978729012 |  4.800000 |
 
 Agrupar los datos por décimas de grados Lat y Lon, sumar horas totales
 de actividad y horas de pesca También se bajan los archivos JSON con los
@@ -813,66 +977,15 @@ TotalHoursGraph <- TotalHoursGraph[which(TotalHoursGraph$Hrs_Diff < 50),]
 #Bajar los archivos JSON con los polígonos de interés
 #Pisagua
 Pisagua_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/Pisagua.geojson")
-```
-
-    ## Reading layer `Pisagua' from data source `/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/Pisagua.geojson' using driver `GeoJSON'
-    ## Simple feature collection with 1 feature and 12 fields
-    ## geometry type:  MULTIPOLYGON
-    ## dimension:      XYZ
-    ## bbox:           xmin: -70.46102 ymin: -19.84536 xmax: -70.14736 ymax: -19.30675
-    ## z_range:        zmin: 0 zmax: 0
-    ## CRS:            4326
-
-``` r
 #Tarapacá
 Tarapaca_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/TarapacaPoly.geojson")
-```
-
-    ## Reading layer `TarapacaPoly' from data source `/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/TarapacaPoly.geojson' using driver `GeoJSON'
-    ## Simple feature collection with 1 feature and 1 field
-    ## geometry type:  MULTIPOLYGON
-    ## dimension:      XY
-    ## bbox:           xmin: -73.76886 ymin: -21.42572 xmax: -70.06342 ymax: -19.11725
-    ## CRS:            4326
-
-``` r
 #Ventana 5
 Ventana5_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP5gj.geojson")
-```
-
-    ## Reading layer `VP5gj' from data source `/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP5gj.geojson' using driver `GeoJSON'
-    ## Simple feature collection with 1 feature and 12 fields
-    ## geometry type:  MULTIPOLYGON
-    ## dimension:      XYZ
-    ## bbox:           xmin: -70.30101 ymin: -19.59848 xmax: -70.20264 ymax: -19.30752
-    ## z_range:        zmin: 0 zmax: 0
-    ## CRS:            4326
-
-``` r
 #Ventana 6
 Ventana6_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP6gj.geojson")
-```
-
-    ## Reading layer `VP6gj' from data source `/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP6gj.geojson' using driver `GeoJSON'
-    ## Simple feature collection with 1 feature and 12 fields
-    ## geometry type:  MULTIPOLYGON
-    ## dimension:      XYZ
-    ## bbox:           xmin: -70.27086 ymin: -19.66683 xmax: -70.1693 ymax: -19.59685
-    ## z_range:        zmin: 0 zmax: 0
-    ## CRS:            4326
-
-``` r
 #Ventana 7
 Ventana7_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP7intersectgj.geojson")
 ```
-
-    ## Reading layer `VP7intersectgj' from data source `/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP7intersectgj.geojson' using driver `GeoJSON'
-    ## Simple feature collection with 1 feature and 27 fields
-    ## geometry type:  MULTIPOLYGON
-    ## dimension:      XYZ
-    ## bbox:           xmin: -70.18952 ymin: -19.83149 xmax: -70.14736 ymax: -19.66734
-    ## z_range:        zmin: 0 zmax: 0
-    ## CRS:            4326
 
 Generar el mapa de esfuerzo pesquero por horas de pesca de acuerdo a
 décimas de grados Lat y Lon
@@ -892,7 +1005,7 @@ MapTest <- ggplot() +
     scale_fill_gradientn(colours = fishwatchr::gfw_palettes$map_effort_dark)+
   fishwatchr::theme_gfw_map(theme = 'dark')+
   geom_tile(data = FishingHoursGraph, aes(x = LonBin, y = LatBin, fill = FishingHours), alpha = 0.5)+
-  labs(fill = "Horas", title = "Horas de Pesca por Área")+
+  labs(fill = "Horas", title = "Horas de Pesca por Área en VMS")+
   geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
   geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
   geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
@@ -906,7 +1019,7 @@ MapTest <- ggplot() +
 MapTest
 ```
 
-![](Report_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](Report_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
 El mismo mapa de arriba pero enfocado en Pisagua y las tres ventanas
 
@@ -927,7 +1040,7 @@ MapTest2 <- MapTest + coord_sf(xlim = c(-70.5, -70.1), ylim = c(-19.87, -19.3))+
 MapTest2
 ```
 
-![](Report_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+![](Report_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
 
 Generar el mapa de actividad total en horas (pesca y no pesca) de
 acuerdo a décimas de grados Lat y Lon
@@ -945,7 +1058,7 @@ MapTestHrsTotal <- ggplot() +
 
   fishwatchr::theme_gfw_map(theme = 'dark')+
   geom_tile(data = TotalHoursGraph, aes(x = LonBin, y = LatBin, fill = Hrs_Diff), alpha = 0.5)+
-  labs(fill = "Horas", title = "Horas Totales por Área")+
+  labs(fill = "Horas", title = "Horas Totales por Área en VMS")+
   geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
   geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
   geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
@@ -959,7 +1072,7 @@ MapTestHrsTotal <- ggplot() +
 MapTestHrsTotal
 ```
 
-![](Report_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](Report_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
 
 El mismo mapa de arriba pero enfocado en Pisagua y las tres ventanas
 
@@ -980,4 +1093,4 @@ MapTestHrsTotal2 <- MapTestHrsTotal + coord_sf(xlim = c(-70.5, -70.1), ylim = c(
 MapTestHrsTotal2
 ```
 
-![](Report_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+![](Report_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->

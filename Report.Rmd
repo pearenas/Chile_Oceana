@@ -1,5 +1,5 @@
 ---
-title: "Reporte Preliminar Oceana Chile AMP Pisagua"
+title: "Reporte VMS Preliminar Oceana Chile AMP Pisagua"
 author: "Esteban Arenas"
 date: "6/15/2020"
 output: github_document
@@ -117,7 +117,7 @@ PDF_Vessels_Total$Hrs_Diff <- Tmp
 NetScoreA <- PDF_Vessels_Total$nnet_score[1:nrow(PDF_Vessels_Total)-1]
 NetScoreB <- PDF_Vessels_Total$nnet_score[2:nrow(PDF_Vessels_Total)]
 #Mask Fishing Hours
-#Net Scores of 0 are treated as scores of 0
+#Net Scores of NA are treated as scores of 0
 MaskFishingHours <- NetScoreA == 1 & NetScoreB == 1
 MaskFishingHours <- append(MaskFishingHours,FALSE)
 MaskFishingHours[is.na(MaskFishingHours)] <- FALSE
@@ -141,7 +141,8 @@ Vessels_Clip_Tarapaca <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/
 
 #Aggregate by vessel, adding fishing hours
 Tarapaca_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_Tarapaca, sum))
-#Export final list of vessels and associated fishing hours within
+Tarapaca_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_Tarapaca, sum))
+#Export final list of vessels and associated hours within
 #Tarapaca region
 
 ##write.csv(Tarapaca_FH, file = "Tarapaca_Horas_de_Pesca.csv")
@@ -151,8 +152,14 @@ Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
 
 **Tarapacá**
 
+Horas de Pesca
 ```{r,echo=FALSE, results='asis'}
 kable(Tarapaca_FH)
+```
+
+Horas Totales
+```{r,echo=FALSE, results='asis'}
+kable(Tarapaca_TH)
 ```
 
 ```{r, echo=TRUE}
@@ -161,7 +168,8 @@ Vessels_Clip_Pisagua <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/C
 
 #Aggregate by vessel, adding fishing hours
 Pisagua_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_Pisagua, sum))
-#Export final list of vessels and associated fishing hours within
+Pisagua_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_Pisagua, sum))
+#Export final list of vessels and associated hours within
 #Pisagua MPA
 
 ##write.csv(Pisagua_FH, file = "Pisagua_Horas_de_Pesca.csv")
@@ -169,9 +177,16 @@ Pisagua_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip
 
 **Pisagua**
 
+Horas de Pesca
 ```{r,echo=FALSE, results='asis'}
 kable(Pisagua_FH)
 ```
+
+Horas Totales
+```{r,echo=FALSE, results='asis'}
+kable(Pisagua_TH)
+```
+
 
 ```{r, echo=TRUE}
 ##### 3.) Ventana 5
@@ -179,7 +194,8 @@ Vessels_Clip_V5 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/
 
 #Aggregate by vessel, adding fishing hours
 V5_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V5, sum))
-#Export final list of vessels and associated fishing hours within
+V5_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_V5, sum))
+#Export final list of vessels and associated hours within
 #Ventana 5
 
 ##write.csv(V5_FH, file = "V5_Horas_de_Pesca.csv")
@@ -187,8 +203,14 @@ V5_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V5, 
 
 **Ventana 5**
 
+Horas de Pesca
 ```{r,echo=FALSE, results='asis'}
 kable(V5_FH)
+```
+
+Horas Totales
+```{r,echo=FALSE, results='asis'}
+kable(V5_TH)
 ```
 
 ```{r, echo=TRUE}
@@ -197,7 +219,8 @@ Vessels_Clip_V6 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/
 
 #Aggregate by vessel, adding fishing hours
 V6_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V6, sum))
-#Export final list of vessels and associated fishing hours within
+V6_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_V6, sum))
+#Export final list of vessels and associated hours within
 #Ventana 6
 
 ##write.csv(V6_FH, file = "V6_Horas_de_Pesca.csv")
@@ -205,8 +228,14 @@ V6_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V6, 
 
 **Ventana 6**
 
+Fishing Hours
 ```{r,echo=FALSE, results='asis'}
 kable(V6_FH)
+```
+
+Total Hours
+```{r,echo=FALSE, results='asis'}
+kable(V6_TH)
 ```
 
 ```{r, echo=TRUE}
@@ -215,7 +244,8 @@ Vessels_Clip_V7 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/
 
 #Aggregate by vessel, adding fishing hours
 V7_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V7, sum))
-#Export final list of vessels and associated fishing hours within
+V7_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_V7, sum))
+#Export final list of vessels and associated hours within
 #Ventana 7
 
 ##write.csv(V7_FH, file = "V7_Horas_de_Pesca.csv")
@@ -223,8 +253,14 @@ V7_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V7, 
 
 **Ventana 7**
 
+Fishing Hours
 ```{r,echo=FALSE, results='asis'}
 kable(V7_FH)
+```
+
+Total Hours
+```{r,echo=FALSE, results='asis'}
+kable(V7_TH)
 ```
 
 Agrupar los datos por décimas de grados Lat y Lon, sumar horas totales de actividad y horas de pesca
@@ -277,7 +313,7 @@ MapTest <- ggplot() +
     scale_fill_gradientn(colours = fishwatchr::gfw_palettes$map_effort_dark)+
   fishwatchr::theme_gfw_map(theme = 'dark')+
   geom_tile(data = FishingHoursGraph, aes(x = LonBin, y = LatBin, fill = FishingHours), alpha = 0.5)+
-  labs(fill = "Horas", title = "Horas de Pesca por Área")+
+  labs(fill = "Horas", title = "Horas de Pesca por Área en VMS")+
   geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
   geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
   geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
@@ -322,7 +358,7 @@ MapTestHrsTotal <- ggplot() +
 
   fishwatchr::theme_gfw_map(theme = 'dark')+
   geom_tile(data = TotalHoursGraph, aes(x = LonBin, y = LatBin, fill = Hrs_Diff), alpha = 0.5)+
-  labs(fill = "Horas", title = "Horas Totales por Área")+
+  labs(fill = "Horas", title = "Horas Totales por Área en VMS")+
   geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
   geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
   geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
