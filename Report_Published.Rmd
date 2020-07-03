@@ -1,0 +1,221 @@
+---
+title: "Reporte Published Data Preliminar Oceana Chile AMP Pisagua"
+author: "Esteban Arenas"
+date: "7/3/2020"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, results='hide', include=FALSE}
+library(bigrquery)
+library(lubridate)
+library(geojsonio)
+library(sf)
+library(tidyverse)
+library(data.table)
+library(dplyr)
+library(ggmap)
+library(maps)
+library(knitr)
+library(fishwatchr)
+library(extrafont)
+loadfonts()
+
+con <- DBI::dbConnect(bigrquery::bigquery(), project = "world-fishing-827", use_legacy_sql = FALSE)
+```
+
+Nada del código corre dentro de este Rmarkdown pero lo incluyo nada más para que se pueda evaluar la metodología. Este es un reporte preliminar que solo muestra el código usado y los resultados obtenidos. Podremos ir modificándolo para llegar a la versión final.
+
+
+UniqueVessNames es la base de datos que se generó previamente en el análisis AIS. Contiene todas las embarcaciones VMS Chile que estén dentro del PDF que nos dio Oceana Chile
+
+El resto del proceso se explica en los comentarios del código
+
+```{mysql connection = con, output.var = "Vessel_id", eval=FALSE}
+SELECT vessel_id, n_shipname.value
+FROM `world-fishing-827.pipe_chile_production_v20200331.vessel_info`
+INNER JOIN `world-fishing-827.scratch_Esteban.UniqueVessNames_`
+  ON `world-fishing-827.pipe_chile_production_v20200331.vessel_info`.n_shipname.value = `world-fishing-827.scratch_Esteban.UniqueVessNames_`.string_field_2
+```
+
+```{r, eval=FALSE, echo=TRUE}
+#Multiple vessel ids per vessel name
+write.csv(Vessel_id, file = "Vessel_id.csv")
+```
+
+```{mysql connection = con, output.var = "Published_Data", eval=FALSE}
+WITH
+JOINED AS (
+SELECT event_type,vessel_id,event_start,event_end,lat_mean,lon_mean
+FROM `world-fishing-827.pipe_chile_production_v20200331.published_events_fishing`
+INNER JOIN `world-fishing-827.scratch_Esteban.Vessel_id`
+  ON `world-fishing-827.pipe_chile_production_v20200331.published_events_fishing`.vessel_id = `world-fishing-827.scratch_Esteban.Vessel_id`.vessel_id_2
+)
+SELECT *
+FROM JOINED
+WHERE event_start BETWEEN TIMESTAMP('2019-02-01')
+AND TIMESTAMP('2020-06-13')
+AND lat_mean > -22 and lat_mean < -18.6 and lon_mean > -74 and lon_mean < -69.8
+```
+
+```{r, eval=FALSE, echo=TRUE}
+Published_Data_Copy <- copy(Published_Data)
+#Add associated vessel name
+Published_Data_Copy$n_shipname <- AISChileVessels_ID$value[match(Published_Data_Copy$vessel_id, AISChileVessels_ID$vessel_id)]
+#Order by n_shipname and then timestamp
+Published_Data_Copy <- Published_Data_Copy[with(Published_Data_Copy, order(vessel_id, event_start)),]
+#Calculate time in between timestamps
+#Convert timestamp to epoch seconds
+Published_Data_Copy$EpochSec_Start <- as.integer(as.POSIXct(Published_Data_Copy$event_start))
+Published_Data_Copy$EpochSec_End <- as.integer(as.POSIXct(Published_Data_Copy$event_end))
+#Converting back to date to make sure epoch is correct
+#as_datetime(Published_Data_Copy$EpochSec_Start[1])
+#Calculate hours between event_start and event_end
+Published_Data_Copy$hours <- (Published_Data_Copy$EpochSec_End - Published_Data_Copy$EpochSec_Start)/3600
+
+#Resulting file is exported and clipped in QGIS according to each region.
+#This file includes published fishing hours for all VMS available vessels of interest to Oceana Chile.
+#Around 18 thousand rows for vessels between 2019-02-01 and 2020-06-13
+write.csv(Published_Data_Copy, file = "Published_Data.csv")
+```
+
+**"Published_Data.csv"** is exported and clipped in QGIS according to each region. This file includes Published fishing hours for all VMS available vessels of interest to Oceana Chile. This is around 8 thousand rows for vessels between 2019-02-01 and 2020-06-13
+
+Clipped versions of the file, according to polygons of interest, are then imported below: Tarapacá and Pisagua
+
+```{r, echo=TRUE}
+##### 1.) TARAPACA
+Vessels_Clip_Tarapaca_Published <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Vessels_Clip_Tarapaca_Published.csv", header = TRUE)
+
+#Aggregate by vessel, adding fishing hours
+Tarapaca_FH_Published <- data.frame(aggregate(hours ~ n_shipname + vessel_id, Vessels_Clip_Tarapaca_Published, sum))
+Tarapaca_FH_Published <- Tarapaca_FH_Published[with(Tarapaca_FH_Published, order(-hours)),]
+
+#Export final list of vessels and associated hours within
+#Tarapaca region
+
+##rite.csv(Tarapaca_FH_Published, file = "Tarapaca_Horas_de_Pesca_Published.csv")
+```
+
+Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
+
+**Tarapacá**
+
+Horas de Pesca
+```{r,echo=FALSE, results='asis'}
+kable(Tarapaca_FH_Published)
+```
+
+```{r, echo=TRUE}
+##### 2.) PISAGUA
+Vessels_Clip_Pisagua_Published <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Vessels_Clip_Pisagua_Published.csv", header = TRUE)
+
+#Aggregate by vessel, adding fishing hours
+Pisagua_FH_Published <- data.frame(aggregate(hours ~ n_shipname + vessel_id, Vessels_Clip_Pisagua_Published, sum))
+Pisagua_FH_Published <- Pisagua_FH_Published[with(Pisagua_FH_Published, order(-hours)),]
+
+#Export final list of vessels and associated hours within
+#Pisagua region
+
+##write.csv(Pisagua_FH_Published, file = "Pisagua_Horas_de_Pesca_Published.csv")
+```
+
+**Pisagua**
+
+Horas de Pesca
+```{r,echo=FALSE, results='asis'}
+kable(Pisagua_FH_Published)
+```
+
+**Ventana 5**
+
+No hay ninguna embarcación dentro de la ventana 5
+
+**Ventana 6**
+
+No hay ninguna embarcación dentro de la ventana 6
+
+**Ventana 7**
+
+No hay ninguna embarcación dentro de la ventana 7
+
+
+Agrupar los datos por décimas de grados Lat y Lon, sumar horas totales de actividad y horas de pesca
+También se bajan los archivos JSON con los polígonos de interes que irán en los mapas
+
+```{r, echo=TRUE,results='hide'}
+#Graphing Fishing Effort Hours for the "Tarapaca_Fishing_Published" DB
+#by grouping hours into lat and lon hundreth bins
+Vessels_Clip_Tarapaca_Published$LatBin <- (floor(Vessels_Clip_Tarapaca_Published$lat_mean * 100)/100)
+Vessels_Clip_Tarapaca_Published$LonBin <- (floor(Vessels_Clip_Tarapaca_Published$lon_mean * 100)/100)
+
+#Fishing hours Graph
+FishingHoursGraph_Published <- data.frame(aggregate(hours ~ LatBin + LonBin, Vessels_Clip_Tarapaca_Published, sum))
+#Se quitan 37 lineas (outliers) de valores > 20 (.54% de los datos) para que el mapa 
+#muestre resultados útiles
+FishingHoursGraph_Published <- FishingHoursGraph_Published[which(FishingHoursGraph_Published$hours < 20),]
+
+###Mapa
+#Bajar los archivos JSON con los polígonos de interés
+#Pisagua
+Pisagua_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/Pisagua.geojson")
+#Tarapacá
+Tarapaca_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/TarapacaPoly.geojson")
+#Ventana 5
+Ventana5_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP5gj.geojson")
+#Ventana 6
+Ventana6_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP6gj.geojson")
+#Ventana 7
+Ventana7_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP7intersectgj.geojson")
+```
+
+Generar el mapa de esfuerzo pesquero por horas de pesca de acuerdo a décimas de grados Lat y Lon
+
+```{r, eval=TRUE, echo=TRUE, dpi=300}
+# GFW logo
+gfw_logo <- png::readPNG("/Users/Esteban/Documents/Jobs/GFW/General/Logo/GFW_logo_primary_White.png")
+gfw_logo_rast <- grid::rasterGrob(gfw_logo, interpolate = T)
+
+#Map
+land_sf <- rnaturalearth::ne_countries(scale = 10, returnclass = 'sf')
+MapTest_Published <- ggplot() + 
+  geom_sf(data = land_sf,
+            fill = fishwatchr::gfw_palettes$map_country_dark[1],
+            color = fishwatchr::gfw_palettes$map_country_dark[2],
+          size=.1) +
+    scale_fill_gradientn(colours = fishwatchr::gfw_palettes$map_effort_dark)+
+  fishwatchr::theme_gfw_map(theme = 'dark')+
+  geom_tile(data = FishingHoursGraph_Published, aes(x = LonBin, y = LatBin, fill = hours), alpha = 0.5)+
+  labs(fill = "Horas", title = "Horas de Pesca por Área en Datos Publicados de GFW")+
+  geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
+  geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
+  geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
+  coord_sf(xlim = c(-74, -69.8), ylim = c(-22, -18.6))+
+  #Add GFW logo
+  annotation_custom(gfw_logo_rast,
+                      ymin = -21.95,
+                      ymax = -21.53,
+                      xmin = -73.8,
+                      xmax = -72.6)
+MapTest_Published
+
+```
+
+El mismo mapa de arriba pero enfocado en Pisagua
+
+```{r, eval=TRUE,echo=TRUE, dpi=300}
+#Zoomed in Pisagua fishing hours map
+MapTest2_Published <- MapTest_Published + coord_sf(xlim = c(-70.5, -70.1), ylim = c(-19.87, -19.3))+
+    #Add GFW logo
+  annotation_custom(gfw_logo_rast,
+                      ymin = -19.35,
+                      ymax = -19.3,
+                      xmin = -70.2,
+                      xmax = -70.1)
+MapTest2_Published
+
+```
+

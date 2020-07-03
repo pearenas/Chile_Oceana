@@ -119,13 +119,17 @@ Tarapaca_NotFishing_AIS <- subset(Vessels_Clip_Tarapaca_AIS, nnet_score==0 | is.
 
 #Aggregate by vessel, adding fishing hours
 Tarapaca_FH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Tarapaca_Fishing_AIS, sum))
+Tarapaca_FH_AIS <- Tarapaca_FH_AIS[with(Tarapaca_FH_AIS, order(-hours)),]
 #Aggregate by vessel, adding total hours
 Tarapaca_TH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Tarapaca_NotFishing_AIS, sum))
+Tarapaca_TH_AIS <- Tarapaca_TH_AIS[with(Tarapaca_TH_AIS, order(-hours)),]
 
 #Export final list of vessels and associated hours within
 #Tarapaca region
 
-##write.csv(Tarapaca_FH_AIS, file = "Tarapaca_Horas_de_Pesca_AIS.csv")
+# write.csv(Tarapaca_FH_AIS, file = "Tarapaca_Horas_de_Pesca_AIS.csv")
+# write.csv(Tarapaca_TH_AIS, file = "Tarapaca_Horas_Totales_AIS.csv")
+
 ```
 
 Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
@@ -154,13 +158,17 @@ Pisagua_NotFishing_AIS <- subset(Vessels_Clip_Pisagua_AIS, nnet_score==0 | is.na
 
 #Aggregate by vessel, adding fishing hours
 Pisagua_FH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Pisagua_Fishing_AIS, sum))
+Pisagua_FH_AIS <- Pisagua_FH_AIS[with(Pisagua_FH_AIS, order(-hours)),]
 #Aggregate by vessel, adding total hours
 Pisagua_TH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Pisagua_NotFishing_AIS, sum))
+Pisagua_TH_AIS <- Pisagua_TH_AIS[with(Pisagua_TH_AIS, order(-hours)),]
 
 #Export final list of vessels and associated hours within
 #Pisagua region
 
-##write.csv(Pisagua_FH_AIS, file = "Pisagua_Horas_de_Pesca_AIS.csv")
+# write.csv(Pisagua_FH_AIS, file = "Pisagua_Horas_de_Pesca_AIS.csv")
+# write.csv(Pisagua_TH_AIS, file = "Pisagua_Horas_Totales_AIS.csv")
+
 ```
 
 **Pisagua**
@@ -191,11 +199,12 @@ Vessels_Clip_V6_AIS$n_shipname <- AISChileVessels_SSVID$n_shipname[match(Vessels
 
 #Aggregate by vessel, adding total hours
 V6_TH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Vessels_Clip_V6_AIS, sum))
+V6_TH_AIS <- V6_TH_AIS[with(V6_TH_AIS, order(-hours)),]
 
 #Export final list of vessels and associated hours within
 #V6 region
 
-##write.csv(V6_TH_AIS, file = "V6_Horas_Totales_AIS.csv")
+# write.csv(V6_TH_AIS, file = "V6_Horas_Totales_AIS.csv")
 ```
 
 **Ventana 6**
@@ -249,7 +258,7 @@ Ventana7_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_
 
 Generar el mapa de esfuerzo pesquero por horas de pesca de acuerdo a décimas de grados Lat y Lon
 
-```{r, eval=TRUE, echo=TRUE}
+```{r, eval=TRUE, echo=TRUE, dpi=300}
 # GFW logo
 gfw_logo <- png::readPNG("/Users/Esteban/Documents/Jobs/GFW/General/Logo/GFW_logo_primary_White.png")
 gfw_logo_rast <- grid::rasterGrob(gfw_logo, interpolate = T)
@@ -281,7 +290,7 @@ MapTest_AIS
 
 El mismo mapa de arriba pero enfocado en Pisagua y las tres ventanas
 
-```{r, eval=TRUE,echo=TRUE}
+```{r, eval=TRUE,echo=TRUE, dpi=300}
 #Zoomed in Pisagua fishing hours map
 MapTest2_AIS <- MapTest_AIS + coord_sf(xlim = c(-70.5, -70.1), ylim = c(-19.87, -19.3))+
     #Add GFW logo
@@ -296,7 +305,7 @@ MapTest2_AIS
 
 Generar el mapa de actividad total en horas (pesca y no pesca) de acuerdo a décimas de grados Lat y Lon
 
-```{r, eval=TRUE, echo=TRUE}
+```{r, eval=TRUE, echo=TRUE, dpi=300}
 #Map Total Hours
 land_sf <- rnaturalearth::ne_countries(scale = 10, returnclass = 'sf')
 MapTestHrsTotal_AIS <- ggplot() + 
@@ -326,7 +335,7 @@ MapTestHrsTotal_AIS
 
 El mismo mapa de arriba pero enfocado en Pisagua y las tres ventanas
 
-```{r, eval=TRUE,echo=TRUE}
+```{r, eval=TRUE,echo=TRUE, dpi=300}
 #Zoomed in Pisagua total hours map
 MapTestHrsTotal2_AIS <- MapTestHrsTotal_AIS + coord_sf(xlim = c(-70.5, -70.1), ylim = c(-19.87, -19.3))+
     #Add GFW logo

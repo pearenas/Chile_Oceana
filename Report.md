@@ -584,11 +584,16 @@ Vessels_Clip_Tarapaca <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/
 
 #Aggregate by vessel, adding fishing hours
 Tarapaca_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_Tarapaca, sum))
+Tarapaca_FH <- Tarapaca_FH[with(Tarapaca_FH, order(-FishingHours)),]
+
 Tarapaca_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_Tarapaca, sum))
+Tarapaca_TH <- Tarapaca_TH[with(Tarapaca_TH, order(-Hrs_Diff)),]
+
 #Export final list of vessels and associated hours within
 #Tarapaca region
 
-##write.csv(Tarapaca_FH, file = "Tarapaca_Horas_de_Pesca.csv")
+# write.csv(Tarapaca_FH, file = "Tarapaca_Horas_de_Pesca_VMS.csv")
+# write.csv(Tarapaca_TH, file = "Tarapaca_Horas_Totales_VMS.csv")
 ```
 
 Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
@@ -597,107 +602,107 @@ Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
 
 Horas de Pesca
 
-| shipname                       | ssvid                            | FishingHours |
-| :----------------------------- | :------------------------------- | -----------: |
-| DON GINO (IND)                 | 009f555f2a4523e8f25b51c10a2d4afd |     449.8297 |
-| BARRACUDA IV (IND)             | 010eae4f71f823055aba0097c17f48a2 |     469.1125 |
-| EPERVA 51 (IND)                | 05fe3d97e97aae317a06d1db2dab4cec |     285.2150 |
-| COLLEN (IND)                   | 07946c6c27e325d71496283118ac469b |     421.1500 |
-| EPERVA 49 (IND)                | 195c1759c59d14f5513f080354507e2c |     309.0667 |
-| SAN JORGE I (IND)              | 1ae5ea3515cdd6918c4787afa20c12e2 |     161.0667 |
-| TRUENO I (IND)                 | 1d5723e49e22d01b586452b7a70c6850 |     190.1394 |
-| EPERVA 62 (IND)                | 261841142b07a6a42f87f6bfa8d299e8 |     353.3322 |
-| EPERVA 66 (IND)                | 34050a8ab7c93a7f7d4b774991ad8cfe |     460.4675 |
-| PUCARA (IND)                   | 3684b47011856bbff50058140e3fc034 |     251.6456 |
-| ANGAMOS 3 (IND)                | 3c42f58b263bae0411a250ec361af6bd |     389.2639 |
-| EPERVA 65 (IND)                | 489f8567c3781ee3eeeb8d80860db227 |     480.2853 |
-| LOA 7 (IND)                    | 4a9c06e32670db8fa44b4263898c7028 |     425.3883 |
-| TORNADO (IND)                  | 4afeb365e004e211b9f4f75992ac826d |     333.1628 |
-| EPERVA 56 (IND)                | 6acebfc5e0f92a96cc46875b41ec40ce |     450.4294 |
-| EPERVA 64 (IND)                | 72bc3105416da385900d739e31998528 |     297.7158 |
-| AUDAZ (IND)                    | 7411a8426ee41f309143803adf6b4265 |     461.6036 |
-| ANGAMOS 1 (IND)                | 78aff522f0aec7c88b1817ffacc8c7d3 |     305.5697 |
-| EPERVA 61 (IND)                | 7a1b005e7034b97646a006680ef64134 |     384.9067 |
-| MERO (IND)                     | 7ca7fb3dc020a763d65cdf653c66d46d |     406.4556 |
-| ATACAMA V (IND)                | 81234a9a555105f9362a6324f1b3b940 |     401.5500 |
-| HALCON (IND)                   | 8c06283b95f004b9bb9d51f0826d0872 |     343.8000 |
-| COSTA GRANDE 1 (IND)           | 8e61b2dea7fc95e8dd7268e4a4913f6d |     481.0167 |
-| ALERCE (IND)                   | 9921d0ac5e1d5bdc41399c53791cc581 |     285.7333 |
-| MARLIN (IND)                   | 9bb82acbaf91f57e1ec4e4851046a69e |     284.9336 |
-| RELAMPAGO (IND)                | a805a0a8aff4229a31b3afbef9fa5fd0 |     481.3436 |
-| LOA 2 (IND)                    | b159b1dfe41e78c15fb8711382cb2bc7 |     399.1500 |
-| ICALMA (IND)                   | b4f4ed43998c7eb95e0414618587deec |     400.2631 |
-| AVENTURERO (IND)               | b96b75aaef8e0d999ccc681c592b2ab6 |     426.2042 |
-| CLAUDIA ALEJANDRA (IND)        | c15aeaa1abe00a4048adb1fc154dd9a2 |     449.6628 |
-| CORPESCA 2 (IND)               | c832c2f2930755ec8890204819c9a146 |     466.4869 |
-| BANDURRIA (IND)                | c8c8da459d1e759caca82e9a7e6b84ee |     307.0500 |
-| ANGAMOS 4 (IND)                | cd73596de544cdad5167de0bec0e9600 |     338.4408 |
-| LICANTEN (IND)                 | cea8889cfc62653656c617be12f9ecbf |     413.2819 |
-| LOA 1 (IND)                    | d16646c187a936037d86112c1a489f6d |     488.0833 |
-| CAMIÑA (IND)                   | d2e64ca90a91ff56e838d082479627c3 |     161.9136 |
-| ANGAMOS 2 (IND)                | d86e4d54e644ecb0af062f6d592320b2 |     283.7331 |
-| INTREPIDO (IND)                | d8ab179497077a5f41280ff43c5b0729 |     427.4572 |
-| ATACAMA IV (IND)               | db1bcc6dda7aebc958cb4d57083ddc10 |     555.2000 |
-| SAN JORGE I (IND)              | dbcacd5c3136c64d52d353d3506462ed |     237.0072 |
-| SALMON (IND)                   | dc78e67c8916f8e6fb0ec92eabd36f16 |     263.4169 |
-| ALBIMER (IND)                  | de79fac70dcebbc2db1f63a978729012 |     532.1333 |
-| BLANQUILLO (IND)               | df696a559c06bf4493f3df2b91b591bb |     336.1678 |
-| PARINA I (IND)                 | e20f11999c8d625855b6621940fba62b |     441.2289 |
-| DON ERNESTO AYALA MARFIL (IND) | e69fb1df1c47000ae3508ae866b3a037 |     441.4689 |
-| HURACAN (IND)                  | f4af5c6c6b05b6e76937b6e6eff63d13 |     504.9697 |
-| ANGAMOS 9 (IND)                | f50e7f8a15a4aa2e2931b72749681f72 |     268.3386 |
+|    | shipname                       | ssvid                            | FishingHours |
+| -- | :----------------------------- | :------------------------------- | -----------: |
+| 39 | ATACAMA IV (IND)               | db1bcc6dda7aebc958cb4d57083ddc10 |     555.2000 |
+| 42 | ALBIMER (IND)                  | de79fac70dcebbc2db1f63a978729012 |     532.1333 |
+| 46 | HURACAN (IND)                  | f4af5c6c6b05b6e76937b6e6eff63d13 |     504.9697 |
+| 35 | LOA 1 (IND)                    | d16646c187a936037d86112c1a489f6d |     488.0833 |
+| 26 | RELAMPAGO (IND)                | a805a0a8aff4229a31b3afbef9fa5fd0 |     481.3436 |
+| 23 | COSTA GRANDE 1 (IND)           | 8e61b2dea7fc95e8dd7268e4a4913f6d |     481.0167 |
+| 12 | EPERVA 65 (IND)                | 489f8567c3781ee3eeeb8d80860db227 |     480.2853 |
+| 2  | BARRACUDA IV (IND)             | 010eae4f71f823055aba0097c17f48a2 |     469.1125 |
+| 31 | CORPESCA 2 (IND)               | c832c2f2930755ec8890204819c9a146 |     466.4869 |
+| 17 | AUDAZ (IND)                    | 7411a8426ee41f309143803adf6b4265 |     461.6036 |
+| 9  | EPERVA 66 (IND)                | 34050a8ab7c93a7f7d4b774991ad8cfe |     460.4675 |
+| 15 | EPERVA 56 (IND)                | 6acebfc5e0f92a96cc46875b41ec40ce |     450.4294 |
+| 1  | DON GINO (IND)                 | 009f555f2a4523e8f25b51c10a2d4afd |     449.8297 |
+| 30 | CLAUDIA ALEJANDRA (IND)        | c15aeaa1abe00a4048adb1fc154dd9a2 |     449.6628 |
+| 45 | DON ERNESTO AYALA MARFIL (IND) | e69fb1df1c47000ae3508ae866b3a037 |     441.4689 |
+| 44 | PARINA I (IND)                 | e20f11999c8d625855b6621940fba62b |     441.2289 |
+| 38 | INTREPIDO (IND)                | d8ab179497077a5f41280ff43c5b0729 |     427.4572 |
+| 29 | AVENTURERO (IND)               | b96b75aaef8e0d999ccc681c592b2ab6 |     426.2042 |
+| 13 | LOA 7 (IND)                    | 4a9c06e32670db8fa44b4263898c7028 |     425.3883 |
+| 4  | COLLEN (IND)                   | 07946c6c27e325d71496283118ac469b |     421.1500 |
+| 34 | LICANTEN (IND)                 | cea8889cfc62653656c617be12f9ecbf |     413.2819 |
+| 20 | MERO (IND)                     | 7ca7fb3dc020a763d65cdf653c66d46d |     406.4556 |
+| 21 | ATACAMA V (IND)                | 81234a9a555105f9362a6324f1b3b940 |     401.5500 |
+| 28 | ICALMA (IND)                   | b4f4ed43998c7eb95e0414618587deec |     400.2631 |
+| 27 | LOA 2 (IND)                    | b159b1dfe41e78c15fb8711382cb2bc7 |     399.1500 |
+| 11 | ANGAMOS 3 (IND)                | 3c42f58b263bae0411a250ec361af6bd |     389.2639 |
+| 19 | EPERVA 61 (IND)                | 7a1b005e7034b97646a006680ef64134 |     384.9067 |
+| 8  | EPERVA 62 (IND)                | 261841142b07a6a42f87f6bfa8d299e8 |     353.3322 |
+| 22 | HALCON (IND)                   | 8c06283b95f004b9bb9d51f0826d0872 |     343.8000 |
+| 33 | ANGAMOS 4 (IND)                | cd73596de544cdad5167de0bec0e9600 |     338.4408 |
+| 43 | BLANQUILLO (IND)               | df696a559c06bf4493f3df2b91b591bb |     336.1678 |
+| 14 | TORNADO (IND)                  | 4afeb365e004e211b9f4f75992ac826d |     333.1628 |
+| 5  | EPERVA 49 (IND)                | 195c1759c59d14f5513f080354507e2c |     309.0667 |
+| 32 | BANDURRIA (IND)                | c8c8da459d1e759caca82e9a7e6b84ee |     307.0500 |
+| 18 | ANGAMOS 1 (IND)                | 78aff522f0aec7c88b1817ffacc8c7d3 |     305.5697 |
+| 16 | EPERVA 64 (IND)                | 72bc3105416da385900d739e31998528 |     297.7158 |
+| 24 | ALERCE (IND)                   | 9921d0ac5e1d5bdc41399c53791cc581 |     285.7333 |
+| 3  | EPERVA 51 (IND)                | 05fe3d97e97aae317a06d1db2dab4cec |     285.2150 |
+| 25 | MARLIN (IND)                   | 9bb82acbaf91f57e1ec4e4851046a69e |     284.9336 |
+| 37 | ANGAMOS 2 (IND)                | d86e4d54e644ecb0af062f6d592320b2 |     283.7331 |
+| 47 | ANGAMOS 9 (IND)                | f50e7f8a15a4aa2e2931b72749681f72 |     268.3386 |
+| 41 | SALMON (IND)                   | dc78e67c8916f8e6fb0ec92eabd36f16 |     263.4169 |
+| 10 | PUCARA (IND)                   | 3684b47011856bbff50058140e3fc034 |     251.6456 |
+| 40 | SAN JORGE I (IND)              | dbcacd5c3136c64d52d353d3506462ed |     237.0072 |
+| 7  | TRUENO I (IND)                 | 1d5723e49e22d01b586452b7a70c6850 |     190.1394 |
+| 36 | CAMIÑA (IND)                   | d2e64ca90a91ff56e838d082479627c3 |     161.9136 |
+| 6  | SAN JORGE I (IND)              | 1ae5ea3515cdd6918c4787afa20c12e2 |     161.0667 |
 
 Horas Totales
 
-| shipname                       | ssvid                            |  Hrs\_Diff |
-| :----------------------------- | :------------------------------- | ---------: |
-| DON GINO (IND)                 | 009f555f2a4523e8f25b51c10a2d4afd |  8506.3189 |
-| BARRACUDA IV (IND)             | 010eae4f71f823055aba0097c17f48a2 |  9246.1825 |
-| EPERVA 51 (IND)                | 05fe3d97e97aae317a06d1db2dab4cec |  2452.7431 |
-| COLLEN (IND)                   | 07946c6c27e325d71496283118ac469b |  5774.9833 |
-| EPERVA 49 (IND)                | 195c1759c59d14f5513f080354507e2c |  2251.4667 |
-| SAN JORGE I (IND)              | 1ae5ea3515cdd6918c4787afa20c12e2 |   880.9333 |
-| TRUENO I (IND)                 | 1d5723e49e22d01b586452b7a70c6850 |  1970.5139 |
-| EPERVA 62 (IND)                | 261841142b07a6a42f87f6bfa8d299e8 |  2964.7261 |
-| EPERVA 66 (IND)                | 34050a8ab7c93a7f7d4b774991ad8cfe |  8624.0864 |
-| PUCARA (IND)                   | 3684b47011856bbff50058140e3fc034 |  2819.0433 |
-| ANGAMOS 3 (IND)                | 3c42f58b263bae0411a250ec361af6bd |  9241.0439 |
-| EPERVA 65 (IND)                | 489f8567c3781ee3eeeb8d80860db227 |  9375.0133 |
-| LOA 7 (IND)                    | 4a9c06e32670db8fa44b4263898c7028 |  5656.2025 |
-| TORNADO (IND)                  | 4afeb365e004e211b9f4f75992ac826d |  7260.6181 |
-| EPERVA 56 (IND)                | 6acebfc5e0f92a96cc46875b41ec40ce |  2983.9606 |
-| EPERVA 64 (IND)                | 72bc3105416da385900d739e31998528 |  5808.9153 |
-| AUDAZ (IND)                    | 7411a8426ee41f309143803adf6b4265 |  3128.9703 |
-| ANGAMOS 1 (IND)                | 78aff522f0aec7c88b1817ffacc8c7d3 | 10118.6042 |
-| EPERVA 61 (IND)                | 7a1b005e7034b97646a006680ef64134 |  3184.2322 |
-| MERO (IND)                     | 7ca7fb3dc020a763d65cdf653c66d46d |  8417.8208 |
-| ATACAMA V (IND)                | 81234a9a555105f9362a6324f1b3b940 |  4355.3567 |
-| HALCON (IND)                   | 8c06283b95f004b9bb9d51f0826d0872 |  2540.8356 |
-| COSTA GRANDE 1 (IND)           | 8e61b2dea7fc95e8dd7268e4a4913f6d |  5470.1239 |
-| ALERCE (IND)                   | 9921d0ac5e1d5bdc41399c53791cc581 |  2363.1333 |
-| MARLIN (IND)                   | 9bb82acbaf91f57e1ec4e4851046a69e |  8377.5036 |
-| RELAMPAGO (IND)                | a805a0a8aff4229a31b3afbef9fa5fd0 |  8562.2653 |
-| LOA 2 (IND)                    | b159b1dfe41e78c15fb8711382cb2bc7 |  5831.7725 |
-| ICALMA (IND)                   | b4f4ed43998c7eb95e0414618587deec |  3033.0794 |
-| AVENTURERO (IND)               | b96b75aaef8e0d999ccc681c592b2ab6 |  8638.4886 |
-| CLAUDIA ALEJANDRA (IND)        | c15aeaa1abe00a4048adb1fc154dd9a2 |  5140.3317 |
-| CORPESCA 2 (IND)               | c832c2f2930755ec8890204819c9a146 |  9069.7225 |
-| BANDURRIA (IND)                | c8c8da459d1e759caca82e9a7e6b84ee |  2205.9867 |
-| ANGAMOS 4 (IND)                | cd73596de544cdad5167de0bec0e9600 |  2325.3519 |
-| LICANTEN (IND)                 | cea8889cfc62653656c617be12f9ecbf |  4845.5836 |
-| LOA 1 (IND)                    | d16646c187a936037d86112c1a489f6d |  6017.1069 |
-| CAMIÑA (IND)                   | d2e64ca90a91ff56e838d082479627c3 |  1433.2281 |
-| ANGAMOS 2 (IND)                | d86e4d54e644ecb0af062f6d592320b2 |  2461.3361 |
-| INTREPIDO (IND)                | d8ab179497077a5f41280ff43c5b0729 |  2433.1919 |
-| ATACAMA IV (IND)               | db1bcc6dda7aebc958cb4d57083ddc10 |  5911.2331 |
-| SAN JORGE I (IND)              | dbcacd5c3136c64d52d353d3506462ed |  1554.1183 |
-| SALMON (IND)                   | dc78e67c8916f8e6fb0ec92eabd36f16 |  8336.5392 |
-| ALBIMER (IND)                  | de79fac70dcebbc2db1f63a978729012 |  3936.0003 |
-| BLANQUILLO (IND)               | df696a559c06bf4493f3df2b91b591bb |  7990.0553 |
-| PARINA I (IND)                 | e20f11999c8d625855b6621940fba62b |  3316.4714 |
-| DON ERNESTO AYALA MARFIL (IND) | e69fb1df1c47000ae3508ae866b3a037 |  3175.2547 |
-| HURACAN (IND)                  | f4af5c6c6b05b6e76937b6e6eff63d13 |  9723.7886 |
-| ANGAMOS 9 (IND)                | f50e7f8a15a4aa2e2931b72749681f72 |  2607.6036 |
+|    | shipname                       | ssvid                            |  Hrs\_Diff |
+| -- | :----------------------------- | :------------------------------- | ---------: |
+| 18 | ANGAMOS 1 (IND)                | 78aff522f0aec7c88b1817ffacc8c7d3 | 10118.6042 |
+| 46 | HURACAN (IND)                  | f4af5c6c6b05b6e76937b6e6eff63d13 |  9723.7886 |
+| 12 | EPERVA 65 (IND)                | 489f8567c3781ee3eeeb8d80860db227 |  9375.0133 |
+| 2  | BARRACUDA IV (IND)             | 010eae4f71f823055aba0097c17f48a2 |  9246.1825 |
+| 11 | ANGAMOS 3 (IND)                | 3c42f58b263bae0411a250ec361af6bd |  9241.0439 |
+| 31 | CORPESCA 2 (IND)               | c832c2f2930755ec8890204819c9a146 |  9069.7225 |
+| 29 | AVENTURERO (IND)               | b96b75aaef8e0d999ccc681c592b2ab6 |  8638.4886 |
+| 9  | EPERVA 66 (IND)                | 34050a8ab7c93a7f7d4b774991ad8cfe |  8624.0864 |
+| 26 | RELAMPAGO (IND)                | a805a0a8aff4229a31b3afbef9fa5fd0 |  8562.2653 |
+| 1  | DON GINO (IND)                 | 009f555f2a4523e8f25b51c10a2d4afd |  8506.3189 |
+| 20 | MERO (IND)                     | 7ca7fb3dc020a763d65cdf653c66d46d |  8417.8208 |
+| 25 | MARLIN (IND)                   | 9bb82acbaf91f57e1ec4e4851046a69e |  8377.5036 |
+| 41 | SALMON (IND)                   | dc78e67c8916f8e6fb0ec92eabd36f16 |  8336.5392 |
+| 43 | BLANQUILLO (IND)               | df696a559c06bf4493f3df2b91b591bb |  7990.0553 |
+| 14 | TORNADO (IND)                  | 4afeb365e004e211b9f4f75992ac826d |  7260.6181 |
+| 35 | LOA 1 (IND)                    | d16646c187a936037d86112c1a489f6d |  6017.1069 |
+| 39 | ATACAMA IV (IND)               | db1bcc6dda7aebc958cb4d57083ddc10 |  5911.2331 |
+| 27 | LOA 2 (IND)                    | b159b1dfe41e78c15fb8711382cb2bc7 |  5831.7725 |
+| 16 | EPERVA 64 (IND)                | 72bc3105416da385900d739e31998528 |  5808.9153 |
+| 4  | COLLEN (IND)                   | 07946c6c27e325d71496283118ac469b |  5774.9833 |
+| 13 | LOA 7 (IND)                    | 4a9c06e32670db8fa44b4263898c7028 |  5656.2025 |
+| 23 | COSTA GRANDE 1 (IND)           | 8e61b2dea7fc95e8dd7268e4a4913f6d |  5470.1239 |
+| 30 | CLAUDIA ALEJANDRA (IND)        | c15aeaa1abe00a4048adb1fc154dd9a2 |  5140.3317 |
+| 34 | LICANTEN (IND)                 | cea8889cfc62653656c617be12f9ecbf |  4845.5836 |
+| 21 | ATACAMA V (IND)                | 81234a9a555105f9362a6324f1b3b940 |  4355.3567 |
+| 42 | ALBIMER (IND)                  | de79fac70dcebbc2db1f63a978729012 |  3936.0003 |
+| 44 | PARINA I (IND)                 | e20f11999c8d625855b6621940fba62b |  3316.4714 |
+| 19 | EPERVA 61 (IND)                | 7a1b005e7034b97646a006680ef64134 |  3184.2322 |
+| 45 | DON ERNESTO AYALA MARFIL (IND) | e69fb1df1c47000ae3508ae866b3a037 |  3175.2547 |
+| 17 | AUDAZ (IND)                    | 7411a8426ee41f309143803adf6b4265 |  3128.9703 |
+| 28 | ICALMA (IND)                   | b4f4ed43998c7eb95e0414618587deec |  3033.0794 |
+| 15 | EPERVA 56 (IND)                | 6acebfc5e0f92a96cc46875b41ec40ce |  2983.9606 |
+| 8  | EPERVA 62 (IND)                | 261841142b07a6a42f87f6bfa8d299e8 |  2964.7261 |
+| 10 | PUCARA (IND)                   | 3684b47011856bbff50058140e3fc034 |  2819.0433 |
+| 47 | ANGAMOS 9 (IND)                | f50e7f8a15a4aa2e2931b72749681f72 |  2607.6036 |
+| 22 | HALCON (IND)                   | 8c06283b95f004b9bb9d51f0826d0872 |  2540.8356 |
+| 37 | ANGAMOS 2 (IND)                | d86e4d54e644ecb0af062f6d592320b2 |  2461.3361 |
+| 3  | EPERVA 51 (IND)                | 05fe3d97e97aae317a06d1db2dab4cec |  2452.7431 |
+| 38 | INTREPIDO (IND)                | d8ab179497077a5f41280ff43c5b0729 |  2433.1919 |
+| 24 | ALERCE (IND)                   | 9921d0ac5e1d5bdc41399c53791cc581 |  2363.1333 |
+| 33 | ANGAMOS 4 (IND)                | cd73596de544cdad5167de0bec0e9600 |  2325.3519 |
+| 5  | EPERVA 49 (IND)                | 195c1759c59d14f5513f080354507e2c |  2251.4667 |
+| 32 | BANDURRIA (IND)                | c8c8da459d1e759caca82e9a7e6b84ee |  2205.9867 |
+| 7  | TRUENO I (IND)                 | 1d5723e49e22d01b586452b7a70c6850 |  1970.5139 |
+| 40 | SAN JORGE I (IND)              | dbcacd5c3136c64d52d353d3506462ed |  1554.1183 |
+| 36 | CAMIÑA (IND)                   | d2e64ca90a91ff56e838d082479627c3 |  1433.2281 |
+| 6  | SAN JORGE I (IND)              | 1ae5ea3515cdd6918c4787afa20c12e2 |   880.9333 |
 
 ``` r
 ##### 2.) PISAGUA
@@ -705,118 +710,123 @@ Vessels_Clip_Pisagua <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/C
 
 #Aggregate by vessel, adding fishing hours
 Pisagua_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_Pisagua, sum))
+Pisagua_FH <- Pisagua_FH[with(Pisagua_FH, order(-FishingHours)),]
+
 Pisagua_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_Pisagua, sum))
+Pisagua_TH <- Pisagua_TH[with(Pisagua_TH, order(-Hrs_Diff)),]
+
 #Export final list of vessels and associated hours within
 #Pisagua MPA
 
-##write.csv(Pisagua_FH, file = "Pisagua_Horas_de_Pesca.csv")
+# write.csv(Pisagua_FH, file = "Pisagua_Horas_de_Pesca_VMS.csv")
+# write.csv(Pisagua_TH, file = "Pisagua_Horas_Totales_VMS.csv")
 ```
 
 **Pisagua**
 
 Horas de Pesca
 
-| shipname                       | ssvid                            | FishingHours |
-| :----------------------------- | :------------------------------- | -----------: |
-| DON GINO (IND)                 | 009f555f2a4523e8f25b51c10a2d4afd |   28.7130556 |
-| BARRACUDA IV (IND)             | 010eae4f71f823055aba0097c17f48a2 |   57.2563889 |
-| EPERVA 51 (IND)                | 05fe3d97e97aae317a06d1db2dab4cec |   18.6888889 |
-| COLLEN (IND)                   | 07946c6c27e325d71496283118ac469b |   33.2833333 |
-| EPERVA 49 (IND)                | 195c1759c59d14f5513f080354507e2c |   29.8000000 |
-| SAN JORGE I (IND)              | 1ae5ea3515cdd6918c4787afa20c12e2 |   17.8000000 |
-| TRUENO I (IND)                 | 1d5723e49e22d01b586452b7a70c6850 |   36.7441667 |
-| EPERVA 62 (IND)                | 261841142b07a6a42f87f6bfa8d299e8 |   53.1408333 |
-| EPERVA 66 (IND)                | 34050a8ab7c93a7f7d4b774991ad8cfe |   83.9311111 |
-| PUCARA (IND)                   | 3684b47011856bbff50058140e3fc034 |   39.4013889 |
-| ANGAMOS 3 (IND)                | 3c42f58b263bae0411a250ec361af6bd |   45.1791667 |
-| EPERVA 65 (IND)                | 489f8567c3781ee3eeeb8d80860db227 |   60.6705556 |
-| LOA 7 (IND)                    | 4a9c06e32670db8fa44b4263898c7028 |   48.6033333 |
-| TORNADO (IND)                  | 4afeb365e004e211b9f4f75992ac826d |   66.2586111 |
-| EPERVA 56 (IND)                | 6acebfc5e0f92a96cc46875b41ec40ce |   85.1941667 |
-| EPERVA 64 (IND)                | 72bc3105416da385900d739e31998528 |   40.3352778 |
-| AUDAZ (IND)                    | 7411a8426ee41f309143803adf6b4265 |   39.9019444 |
-| ANGAMOS 1 (IND)                | 78aff522f0aec7c88b1817ffacc8c7d3 |   42.7119444 |
-| EPERVA 61 (IND)                | 7a1b005e7034b97646a006680ef64134 |   48.9822222 |
-| MERO (IND)                     | 7ca7fb3dc020a763d65cdf653c66d46d |   44.5244444 |
-| ATACAMA V (IND)                | 81234a9a555105f9362a6324f1b3b940 |   51.3000000 |
-| HALCON (IND)                   | 8c06283b95f004b9bb9d51f0826d0872 |   13.6408333 |
-| COSTA GRANDE 1 (IND)           | 8e61b2dea7fc95e8dd7268e4a4913f6d |   42.4166667 |
-| ALERCE (IND)                   | 9921d0ac5e1d5bdc41399c53791cc581 |   12.9333333 |
-| MARLIN (IND)                   | 9bb82acbaf91f57e1ec4e4851046a69e |   15.8330556 |
-| RELAMPAGO (IND)                | a805a0a8aff4229a31b3afbef9fa5fd0 |   34.4005556 |
-| LOA 2 (IND)                    | b159b1dfe41e78c15fb8711382cb2bc7 |   32.0333333 |
-| ICALMA (IND)                   | b4f4ed43998c7eb95e0414618587deec |   66.5738889 |
-| AVENTURERO (IND)               | b96b75aaef8e0d999ccc681c592b2ab6 |   43.0602778 |
-| CLAUDIA ALEJANDRA (IND)        | c15aeaa1abe00a4048adb1fc154dd9a2 |   44.1333333 |
-| CORPESCA 2 (IND)               | c832c2f2930755ec8890204819c9a146 |   53.0205556 |
-| BANDURRIA (IND)                | c8c8da459d1e759caca82e9a7e6b84ee |   26.4000000 |
-| ANGAMOS 4 (IND)                | cd73596de544cdad5167de0bec0e9600 |   38.8636111 |
-| LICANTEN (IND)                 | cea8889cfc62653656c617be12f9ecbf |   32.9663889 |
-| LOA 1 (IND)                    | d16646c187a936037d86112c1a489f6d |   48.1166667 |
-| CAMIÑA (IND)                   | d2e64ca90a91ff56e838d082479627c3 |    0.1508333 |
-| ANGAMOS 2 (IND)                | d86e4d54e644ecb0af062f6d592320b2 |   54.0980556 |
-| INTREPIDO (IND)                | d8ab179497077a5f41280ff43c5b0729 |   44.9694444 |
-| ATACAMA IV (IND)               | db1bcc6dda7aebc958cb4d57083ddc10 |   56.0000000 |
-| SAN JORGE I (IND)              | dbcacd5c3136c64d52d353d3506462ed |    3.6930556 |
-| SALMON (IND)                   | dc78e67c8916f8e6fb0ec92eabd36f16 |   34.7058333 |
-| ALBIMER (IND)                  | de79fac70dcebbc2db1f63a978729012 |   51.8666667 |
-| BLANQUILLO (IND)               | df696a559c06bf4493f3df2b91b591bb |   37.3277778 |
-| PARINA I (IND)                 | e20f11999c8d625855b6621940fba62b |   37.3161111 |
-| DON ERNESTO AYALA MARFIL (IND) | e69fb1df1c47000ae3508ae866b3a037 |   45.6202778 |
-| HURACAN (IND)                  | f4af5c6c6b05b6e76937b6e6eff63d13 |   78.2855556 |
-| ANGAMOS 9 (IND)                | f50e7f8a15a4aa2e2931b72749681f72 |   41.7319444 |
+|    | shipname                       | ssvid                            | FishingHours |
+| -- | :----------------------------- | :------------------------------- | -----------: |
+| 15 | EPERVA 56 (IND)                | 6acebfc5e0f92a96cc46875b41ec40ce |   85.1941667 |
+| 9  | EPERVA 66 (IND)                | 34050a8ab7c93a7f7d4b774991ad8cfe |   83.9311111 |
+| 46 | HURACAN (IND)                  | f4af5c6c6b05b6e76937b6e6eff63d13 |   78.2855556 |
+| 28 | ICALMA (IND)                   | b4f4ed43998c7eb95e0414618587deec |   66.5738889 |
+| 14 | TORNADO (IND)                  | 4afeb365e004e211b9f4f75992ac826d |   66.2586111 |
+| 12 | EPERVA 65 (IND)                | 489f8567c3781ee3eeeb8d80860db227 |   60.6705556 |
+| 2  | BARRACUDA IV (IND)             | 010eae4f71f823055aba0097c17f48a2 |   57.2563889 |
+| 39 | ATACAMA IV (IND)               | db1bcc6dda7aebc958cb4d57083ddc10 |   56.0000000 |
+| 37 | ANGAMOS 2 (IND)                | d86e4d54e644ecb0af062f6d592320b2 |   54.0980556 |
+| 8  | EPERVA 62 (IND)                | 261841142b07a6a42f87f6bfa8d299e8 |   53.1408333 |
+| 31 | CORPESCA 2 (IND)               | c832c2f2930755ec8890204819c9a146 |   53.0205556 |
+| 42 | ALBIMER (IND)                  | de79fac70dcebbc2db1f63a978729012 |   51.8666667 |
+| 21 | ATACAMA V (IND)                | 81234a9a555105f9362a6324f1b3b940 |   51.3000000 |
+| 19 | EPERVA 61 (IND)                | 7a1b005e7034b97646a006680ef64134 |   48.9822222 |
+| 13 | LOA 7 (IND)                    | 4a9c06e32670db8fa44b4263898c7028 |   48.6033333 |
+| 35 | LOA 1 (IND)                    | d16646c187a936037d86112c1a489f6d |   48.1166667 |
+| 45 | DON ERNESTO AYALA MARFIL (IND) | e69fb1df1c47000ae3508ae866b3a037 |   45.6202778 |
+| 11 | ANGAMOS 3 (IND)                | 3c42f58b263bae0411a250ec361af6bd |   45.1791667 |
+| 38 | INTREPIDO (IND)                | d8ab179497077a5f41280ff43c5b0729 |   44.9694444 |
+| 20 | MERO (IND)                     | 7ca7fb3dc020a763d65cdf653c66d46d |   44.5244444 |
+| 30 | CLAUDIA ALEJANDRA (IND)        | c15aeaa1abe00a4048adb1fc154dd9a2 |   44.1333333 |
+| 29 | AVENTURERO (IND)               | b96b75aaef8e0d999ccc681c592b2ab6 |   43.0602778 |
+| 18 | ANGAMOS 1 (IND)                | 78aff522f0aec7c88b1817ffacc8c7d3 |   42.7119444 |
+| 23 | COSTA GRANDE 1 (IND)           | 8e61b2dea7fc95e8dd7268e4a4913f6d |   42.4166667 |
+| 47 | ANGAMOS 9 (IND)                | f50e7f8a15a4aa2e2931b72749681f72 |   41.7319444 |
+| 16 | EPERVA 64 (IND)                | 72bc3105416da385900d739e31998528 |   40.3352778 |
+| 17 | AUDAZ (IND)                    | 7411a8426ee41f309143803adf6b4265 |   39.9019444 |
+| 10 | PUCARA (IND)                   | 3684b47011856bbff50058140e3fc034 |   39.4013889 |
+| 33 | ANGAMOS 4 (IND)                | cd73596de544cdad5167de0bec0e9600 |   38.8636111 |
+| 43 | BLANQUILLO (IND)               | df696a559c06bf4493f3df2b91b591bb |   37.3277778 |
+| 44 | PARINA I (IND)                 | e20f11999c8d625855b6621940fba62b |   37.3161111 |
+| 7  | TRUENO I (IND)                 | 1d5723e49e22d01b586452b7a70c6850 |   36.7441667 |
+| 41 | SALMON (IND)                   | dc78e67c8916f8e6fb0ec92eabd36f16 |   34.7058333 |
+| 26 | RELAMPAGO (IND)                | a805a0a8aff4229a31b3afbef9fa5fd0 |   34.4005556 |
+| 4  | COLLEN (IND)                   | 07946c6c27e325d71496283118ac469b |   33.2833333 |
+| 34 | LICANTEN (IND)                 | cea8889cfc62653656c617be12f9ecbf |   32.9663889 |
+| 27 | LOA 2 (IND)                    | b159b1dfe41e78c15fb8711382cb2bc7 |   32.0333333 |
+| 5  | EPERVA 49 (IND)                | 195c1759c59d14f5513f080354507e2c |   29.8000000 |
+| 1  | DON GINO (IND)                 | 009f555f2a4523e8f25b51c10a2d4afd |   28.7130556 |
+| 32 | BANDURRIA (IND)                | c8c8da459d1e759caca82e9a7e6b84ee |   26.4000000 |
+| 3  | EPERVA 51 (IND)                | 05fe3d97e97aae317a06d1db2dab4cec |   18.6888889 |
+| 6  | SAN JORGE I (IND)              | 1ae5ea3515cdd6918c4787afa20c12e2 |   17.8000000 |
+| 25 | MARLIN (IND)                   | 9bb82acbaf91f57e1ec4e4851046a69e |   15.8330556 |
+| 22 | HALCON (IND)                   | 8c06283b95f004b9bb9d51f0826d0872 |   13.6408333 |
+| 24 | ALERCE (IND)                   | 9921d0ac5e1d5bdc41399c53791cc581 |   12.9333333 |
+| 40 | SAN JORGE I (IND)              | dbcacd5c3136c64d52d353d3506462ed |    3.6930556 |
+| 36 | CAMIÑA (IND)                   | d2e64ca90a91ff56e838d082479627c3 |    0.1508333 |
 
 Horas Totales
 
-| shipname                       | ssvid                            | Hrs\_Diff |
-| :----------------------------- | :------------------------------- | --------: |
-| DON GINO (IND)                 | 009f555f2a4523e8f25b51c10a2d4afd | 111.90056 |
-| BARRACUDA IV (IND)             | 010eae4f71f823055aba0097c17f48a2 | 226.33667 |
-| EPERVA 51 (IND)                | 05fe3d97e97aae317a06d1db2dab4cec | 167.24333 |
-| COLLEN (IND)                   | 07946c6c27e325d71496283118ac469b | 169.41667 |
-| EPERVA 49 (IND)                | 195c1759c59d14f5513f080354507e2c | 137.46667 |
-| SAN JORGE I (IND)              | 1ae5ea3515cdd6918c4787afa20c12e2 |  49.66667 |
-| TRUENO I (IND)                 | 1d5723e49e22d01b586452b7a70c6850 | 165.52528 |
-| EPERVA 62 (IND)                | 261841142b07a6a42f87f6bfa8d299e8 | 246.41806 |
-| EPERVA 66 (IND)                | 34050a8ab7c93a7f7d4b774991ad8cfe | 275.66694 |
-| PUCARA (IND)                   | 3684b47011856bbff50058140e3fc034 | 187.31889 |
-| ANGAMOS 3 (IND)                | 3c42f58b263bae0411a250ec361af6bd | 213.11417 |
-| EPERVA 65 (IND)                | 489f8567c3781ee3eeeb8d80860db227 | 195.65250 |
-| LOA 7 (IND)                    | 4a9c06e32670db8fa44b4263898c7028 | 188.81667 |
-| TORNADO (IND)                  | 4afeb365e004e211b9f4f75992ac826d | 234.32806 |
-| EPERVA 56 (IND)                | 6acebfc5e0f92a96cc46875b41ec40ce | 294.03917 |
-| EPERVA 64 (IND)                | 72bc3105416da385900d739e31998528 | 171.63472 |
-| AUDAZ (IND)                    | 7411a8426ee41f309143803adf6b4265 | 188.37222 |
-| ANGAMOS 1 (IND)                | 78aff522f0aec7c88b1817ffacc8c7d3 | 149.78361 |
-| EPERVA 61 (IND)                | 7a1b005e7034b97646a006680ef64134 | 185.93111 |
-| MERO (IND)                     | 7ca7fb3dc020a763d65cdf653c66d46d | 198.62139 |
-| ATACAMA V (IND)                | 81234a9a555105f9362a6324f1b3b940 | 165.31667 |
-| HALCON (IND)                   | 8c06283b95f004b9bb9d51f0826d0872 |  83.23917 |
-| COSTA GRANDE 1 (IND)           | 8e61b2dea7fc95e8dd7268e4a4913f6d | 180.35000 |
-| ALERCE (IND)                   | 9921d0ac5e1d5bdc41399c53791cc581 | 100.66667 |
-| MARLIN (IND)                   | 9bb82acbaf91f57e1ec4e4851046a69e | 151.06778 |
-| RELAMPAGO (IND)                | a805a0a8aff4229a31b3afbef9fa5fd0 | 171.75556 |
-| LOA 2 (IND)                    | b159b1dfe41e78c15fb8711382cb2bc7 | 157.03333 |
-| ICALMA (IND)                   | b4f4ed43998c7eb95e0414618587deec | 283.15056 |
-| AVENTURERO (IND)               | b96b75aaef8e0d999ccc681c592b2ab6 | 197.85500 |
-| CLAUDIA ALEJANDRA (IND)        | c15aeaa1abe00a4048adb1fc154dd9a2 | 226.25333 |
-| CORPESCA 2 (IND)               | c832c2f2930755ec8890204819c9a146 | 218.51417 |
-| BANDURRIA (IND)                | c8c8da459d1e759caca82e9a7e6b84ee | 124.38639 |
-| ANGAMOS 4 (IND)                | cd73596de544cdad5167de0bec0e9600 | 180.93750 |
-| LICANTEN (IND)                 | cea8889cfc62653656c617be12f9ecbf | 155.78361 |
-| LOA 1 (IND)                    | d16646c187a936037d86112c1a489f6d | 174.05000 |
-| CAMIÑA (IND)                   | d2e64ca90a91ff56e838d082479627c3 |  37.98306 |
-| ANGAMOS 2 (IND)                | d86e4d54e644ecb0af062f6d592320b2 | 251.31389 |
-| INTREPIDO (IND)                | d8ab179497077a5f41280ff43c5b0729 | 172.76500 |
-| ATACAMA IV (IND)               | db1bcc6dda7aebc958cb4d57083ddc10 | 204.00000 |
-| SAN JORGE I (IND)              | dbcacd5c3136c64d52d353d3506462ed |  46.13444 |
-| SALMON (IND)                   | dc78e67c8916f8e6fb0ec92eabd36f16 | 173.63611 |
-| ALBIMER (IND)                  | de79fac70dcebbc2db1f63a978729012 | 214.93333 |
-| BLANQUILLO (IND)               | df696a559c06bf4493f3df2b91b591bb | 170.78389 |
-| PARINA I (IND)                 | e20f11999c8d625855b6621940fba62b | 187.50333 |
-| DON ERNESTO AYALA MARFIL (IND) | e69fb1df1c47000ae3508ae866b3a037 | 214.83250 |
-| HURACAN (IND)                  | f4af5c6c6b05b6e76937b6e6eff63d13 | 248.65167 |
-| ANGAMOS 9 (IND)                | f50e7f8a15a4aa2e2931b72749681f72 | 220.86556 |
+|    | shipname                       | ssvid                            | Hrs\_Diff |
+| -- | :----------------------------- | :------------------------------- | --------: |
+| 15 | EPERVA 56 (IND)                | 6acebfc5e0f92a96cc46875b41ec40ce | 294.03917 |
+| 28 | ICALMA (IND)                   | b4f4ed43998c7eb95e0414618587deec | 283.15056 |
+| 9  | EPERVA 66 (IND)                | 34050a8ab7c93a7f7d4b774991ad8cfe | 275.66694 |
+| 37 | ANGAMOS 2 (IND)                | d86e4d54e644ecb0af062f6d592320b2 | 251.31389 |
+| 46 | HURACAN (IND)                  | f4af5c6c6b05b6e76937b6e6eff63d13 | 248.65167 |
+| 8  | EPERVA 62 (IND)                | 261841142b07a6a42f87f6bfa8d299e8 | 246.41806 |
+| 14 | TORNADO (IND)                  | 4afeb365e004e211b9f4f75992ac826d | 234.32806 |
+| 2  | BARRACUDA IV (IND)             | 010eae4f71f823055aba0097c17f48a2 | 226.33667 |
+| 30 | CLAUDIA ALEJANDRA (IND)        | c15aeaa1abe00a4048adb1fc154dd9a2 | 226.25333 |
+| 47 | ANGAMOS 9 (IND)                | f50e7f8a15a4aa2e2931b72749681f72 | 220.86556 |
+| 31 | CORPESCA 2 (IND)               | c832c2f2930755ec8890204819c9a146 | 218.51417 |
+| 42 | ALBIMER (IND)                  | de79fac70dcebbc2db1f63a978729012 | 214.93333 |
+| 45 | DON ERNESTO AYALA MARFIL (IND) | e69fb1df1c47000ae3508ae866b3a037 | 214.83250 |
+| 11 | ANGAMOS 3 (IND)                | 3c42f58b263bae0411a250ec361af6bd | 213.11417 |
+| 39 | ATACAMA IV (IND)               | db1bcc6dda7aebc958cb4d57083ddc10 | 204.00000 |
+| 20 | MERO (IND)                     | 7ca7fb3dc020a763d65cdf653c66d46d | 198.62139 |
+| 29 | AVENTURERO (IND)               | b96b75aaef8e0d999ccc681c592b2ab6 | 197.85500 |
+| 12 | EPERVA 65 (IND)                | 489f8567c3781ee3eeeb8d80860db227 | 195.65250 |
+| 13 | LOA 7 (IND)                    | 4a9c06e32670db8fa44b4263898c7028 | 188.81667 |
+| 17 | AUDAZ (IND)                    | 7411a8426ee41f309143803adf6b4265 | 188.37222 |
+| 44 | PARINA I (IND)                 | e20f11999c8d625855b6621940fba62b | 187.50333 |
+| 10 | PUCARA (IND)                   | 3684b47011856bbff50058140e3fc034 | 187.31889 |
+| 19 | EPERVA 61 (IND)                | 7a1b005e7034b97646a006680ef64134 | 185.93111 |
+| 33 | ANGAMOS 4 (IND)                | cd73596de544cdad5167de0bec0e9600 | 180.93750 |
+| 23 | COSTA GRANDE 1 (IND)           | 8e61b2dea7fc95e8dd7268e4a4913f6d | 180.35000 |
+| 35 | LOA 1 (IND)                    | d16646c187a936037d86112c1a489f6d | 174.05000 |
+| 41 | SALMON (IND)                   | dc78e67c8916f8e6fb0ec92eabd36f16 | 173.63611 |
+| 38 | INTREPIDO (IND)                | d8ab179497077a5f41280ff43c5b0729 | 172.76500 |
+| 26 | RELAMPAGO (IND)                | a805a0a8aff4229a31b3afbef9fa5fd0 | 171.75556 |
+| 16 | EPERVA 64 (IND)                | 72bc3105416da385900d739e31998528 | 171.63472 |
+| 43 | BLANQUILLO (IND)               | df696a559c06bf4493f3df2b91b591bb | 170.78389 |
+| 4  | COLLEN (IND)                   | 07946c6c27e325d71496283118ac469b | 169.41667 |
+| 3  | EPERVA 51 (IND)                | 05fe3d97e97aae317a06d1db2dab4cec | 167.24333 |
+| 7  | TRUENO I (IND)                 | 1d5723e49e22d01b586452b7a70c6850 | 165.52528 |
+| 21 | ATACAMA V (IND)                | 81234a9a555105f9362a6324f1b3b940 | 165.31667 |
+| 27 | LOA 2 (IND)                    | b159b1dfe41e78c15fb8711382cb2bc7 | 157.03333 |
+| 34 | LICANTEN (IND)                 | cea8889cfc62653656c617be12f9ecbf | 155.78361 |
+| 25 | MARLIN (IND)                   | 9bb82acbaf91f57e1ec4e4851046a69e | 151.06778 |
+| 18 | ANGAMOS 1 (IND)                | 78aff522f0aec7c88b1817ffacc8c7d3 | 149.78361 |
+| 5  | EPERVA 49 (IND)                | 195c1759c59d14f5513f080354507e2c | 137.46667 |
+| 32 | BANDURRIA (IND)                | c8c8da459d1e759caca82e9a7e6b84ee | 124.38639 |
+| 1  | DON GINO (IND)                 | 009f555f2a4523e8f25b51c10a2d4afd | 111.90056 |
+| 24 | ALERCE (IND)                   | 9921d0ac5e1d5bdc41399c53791cc581 | 100.66667 |
+| 22 | HALCON (IND)                   | 8c06283b95f004b9bb9d51f0826d0872 |  83.23917 |
+| 6  | SAN JORGE I (IND)              | 1ae5ea3515cdd6918c4787afa20c12e2 |  49.66667 |
+| 40 | SAN JORGE I (IND)              | dbcacd5c3136c64d52d353d3506462ed |  46.13444 |
+| 36 | CAMIÑA (IND)                   | d2e64ca90a91ff56e838d082479627c3 |  37.98306 |
 
 ``` r
 ##### 3.) Ventana 5
@@ -824,11 +834,16 @@ Vessels_Clip_V5 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/
 
 #Aggregate by vessel, adding fishing hours
 V5_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V5, sum))
+V5_FH <- V5_FH[with(V5_FH, order(-FishingHours)),]
+
 V5_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_V5, sum))
+V5_TH <- V5_TH[with(V5_TH, order(-Hrs_Diff)),]
+
 #Export final list of vessels and associated hours within
 #Ventana 5
 
-##write.csv(V5_FH, file = "V5_Horas_de_Pesca.csv")
+# write.csv(V5_FH, file = "V5_Horas_de_Pesca_VMS.csv")
+# write.csv(V5_TH, file = "V5_Horas_Totales_VMS.csv")
 ```
 
 **Ventana 5**
@@ -848,16 +863,16 @@ Horas de Pesca
 
 Horas Totales
 
-| shipname                | ssvid                            | Hrs\_Diff |
-| :---------------------- | :------------------------------- | --------: |
-| BARRACUDA IV (IND)      | 010eae4f71f823055aba0097c17f48a2 | 0.7913889 |
-| COLLEN (IND)            | 07946c6c27e325d71496283118ac469b | 0.9333333 |
-| EPERVA 56 (IND)         | 6acebfc5e0f92a96cc46875b41ec40ce | 0.5377778 |
-| ATACAMA V (IND)         | 81234a9a555105f9362a6324f1b3b940 | 0.2666667 |
-| CLAUDIA ALEJANDRA (IND) | c15aeaa1abe00a4048adb1fc154dd9a2 | 0.1333333 |
-| LICANTEN (IND)          | cea8889cfc62653656c617be12f9ecbf | 1.4833333 |
-| LOA 1 (IND)             | d16646c187a936037d86112c1a489f6d | 0.4000000 |
-| ALBIMER (IND)           | de79fac70dcebbc2db1f63a978729012 | 0.6666667 |
+|   | shipname                | ssvid                            | Hrs\_Diff |
+| - | :---------------------- | :------------------------------- | --------: |
+| 6 | LICANTEN (IND)          | cea8889cfc62653656c617be12f9ecbf | 1.4833333 |
+| 2 | COLLEN (IND)            | 07946c6c27e325d71496283118ac469b | 0.9333333 |
+| 1 | BARRACUDA IV (IND)      | 010eae4f71f823055aba0097c17f48a2 | 0.7913889 |
+| 8 | ALBIMER (IND)           | de79fac70dcebbc2db1f63a978729012 | 0.6666667 |
+| 3 | EPERVA 56 (IND)         | 6acebfc5e0f92a96cc46875b41ec40ce | 0.5377778 |
+| 7 | LOA 1 (IND)             | d16646c187a936037d86112c1a489f6d | 0.4000000 |
+| 4 | ATACAMA V (IND)         | 81234a9a555105f9362a6324f1b3b940 | 0.2666667 |
+| 5 | CLAUDIA ALEJANDRA (IND) | c15aeaa1abe00a4048adb1fc154dd9a2 | 0.1333333 |
 
 ``` r
 ##### 4.) Ventana 6
@@ -865,11 +880,16 @@ Vessels_Clip_V6 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/
 
 #Aggregate by vessel, adding fishing hours
 V6_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V6, sum))
+V6_FH <- V6_FH[with(V6_FH, order(-FishingHours)),]
+
 V6_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_V6, sum))
+V6_TH <- V6_TH[with(V6_TH, order(-Hrs_Diff)),]
+
 #Export final list of vessels and associated hours within
 #Ventana 6
 
-##write.csv(V6_FH, file = "V6_Horas_de_Pesca.csv")
+# write.csv(V6_FH, file = "V6_Horas_de_Pesca_VMS.csv")
+# write.csv(V6_TH, file = "V6_Horas_Totales_VMS.csv")
 ```
 
 **Ventana 6**
@@ -899,26 +919,26 @@ Fishing Hours
 
 Total Hours
 
-| shipname         | ssvid                            | Hrs\_Diff |
-| :--------------- | :------------------------------- | --------: |
-| EPERVA 49 (IND)  | 195c1759c59d14f5513f080354507e2c | 0.1333333 |
-| EPERVA 66 (IND)  | 34050a8ab7c93a7f7d4b774991ad8cfe | 0.0388889 |
-| EPERVA 65 (IND)  | 489f8567c3781ee3eeeb8d80860db227 | 0.0669444 |
-| LOA 7 (IND)      | 4a9c06e32670db8fa44b4263898c7028 | 0.1000000 |
-| TORNADO (IND)    | 4afeb365e004e211b9f4f75992ac826d | 0.1050000 |
-| MERO (IND)       | 7ca7fb3dc020a763d65cdf653c66d46d | 0.1263889 |
-| MARLIN (IND)     | 9bb82acbaf91f57e1ec4e4851046a69e | 0.0758333 |
-| ICALMA (IND)     | b4f4ed43998c7eb95e0414618587deec | 0.2502778 |
-| BANDURRIA (IND)  | c8c8da459d1e759caca82e9a7e6b84ee | 0.2666667 |
-| LICANTEN (IND)   | cea8889cfc62653656c617be12f9ecbf | 0.1333333 |
-| LOA 1 (IND)      | d16646c187a936037d86112c1a489f6d | 0.1333333 |
-| CAMIÑA (IND)     | d2e64ca90a91ff56e838d082479627c3 | 0.1305556 |
-| ANGAMOS 2 (IND)  | d86e4d54e644ecb0af062f6d592320b2 | 0.0386111 |
-| ATACAMA IV (IND) | db1bcc6dda7aebc958cb4d57083ddc10 | 0.2666667 |
-| SALMON (IND)     | dc78e67c8916f8e6fb0ec92eabd36f16 | 0.2675000 |
-| ALBIMER (IND)    | de79fac70dcebbc2db1f63a978729012 | 0.5333333 |
-| HURACAN (IND)    | f4af5c6c6b05b6e76937b6e6eff63d13 | 0.1897222 |
-| ANGAMOS 9 (IND)  | f50e7f8a15a4aa2e2931b72749681f72 | 0.0833333 |
+|    | shipname         | ssvid                            | Hrs\_Diff |
+| -- | :--------------- | :------------------------------- | --------: |
+| 16 | ALBIMER (IND)    | de79fac70dcebbc2db1f63a978729012 | 0.5333333 |
+| 15 | SALMON (IND)     | dc78e67c8916f8e6fb0ec92eabd36f16 | 0.2675000 |
+| 9  | BANDURRIA (IND)  | c8c8da459d1e759caca82e9a7e6b84ee | 0.2666667 |
+| 14 | ATACAMA IV (IND) | db1bcc6dda7aebc958cb4d57083ddc10 | 0.2666667 |
+| 8  | ICALMA (IND)     | b4f4ed43998c7eb95e0414618587deec | 0.2502778 |
+| 17 | HURACAN (IND)    | f4af5c6c6b05b6e76937b6e6eff63d13 | 0.1897222 |
+| 1  | EPERVA 49 (IND)  | 195c1759c59d14f5513f080354507e2c | 0.1333333 |
+| 10 | LICANTEN (IND)   | cea8889cfc62653656c617be12f9ecbf | 0.1333333 |
+| 11 | LOA 1 (IND)      | d16646c187a936037d86112c1a489f6d | 0.1333333 |
+| 12 | CAMIÑA (IND)     | d2e64ca90a91ff56e838d082479627c3 | 0.1305556 |
+| 6  | MERO (IND)       | 7ca7fb3dc020a763d65cdf653c66d46d | 0.1263889 |
+| 5  | TORNADO (IND)    | 4afeb365e004e211b9f4f75992ac826d | 0.1050000 |
+| 4  | LOA 7 (IND)      | 4a9c06e32670db8fa44b4263898c7028 | 0.1000000 |
+| 18 | ANGAMOS 9 (IND)  | f50e7f8a15a4aa2e2931b72749681f72 | 0.0833333 |
+| 7  | MARLIN (IND)     | 9bb82acbaf91f57e1ec4e4851046a69e | 0.0758333 |
+| 3  | EPERVA 65 (IND)  | 489f8567c3781ee3eeeb8d80860db227 | 0.0669444 |
+| 2  | EPERVA 66 (IND)  | 34050a8ab7c93a7f7d4b774991ad8cfe | 0.0388889 |
+| 13 | ANGAMOS 2 (IND)  | d86e4d54e644ecb0af062f6d592320b2 | 0.0386111 |
 
 ``` r
 ##### 5.) Ventana 7
@@ -926,11 +946,16 @@ Vessels_Clip_V7 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/
 
 #Aggregate by vessel, adding fishing hours
 V7_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V7, sum))
+V7_FH <- V7_FH[with(V7_FH, order(-FishingHours)),]
+
 V7_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_V7, sum))
+V7_TH <- V7_TH[with(V7_TH, order(-Hrs_Diff)),]
+
 #Export final list of vessels and associated hours within
 #Ventana 7
 
-##write.csv(V7_FH, file = "V7_Horas_de_Pesca.csv")
+# write.csv(V7_FH, file = "V7_Horas_de_Pesca_VMS.csv")
+# write.csv(V7_TH, file = "V7_Horas_Totales_VMS.csv")
 ```
 
 **Ventana 7**
@@ -946,12 +971,12 @@ Fishing Hours
 
 Total Hours
 
-| shipname      | ssvid                            | Hrs\_Diff |
-| :------------ | :------------------------------- | --------: |
-| COLLEN (IND)  | 07946c6c27e325d71496283118ac469b |  0.400000 |
-| LOA 7 (IND)   | 4a9c06e32670db8fa44b4263898c7028 |  4.266667 |
-| LOA 2 (IND)   | b159b1dfe41e78c15fb8711382cb2bc7 |  5.200000 |
-| ALBIMER (IND) | de79fac70dcebbc2db1f63a978729012 |  4.800000 |
+|   | shipname      | ssvid                            | Hrs\_Diff |
+| - | :------------ | :------------------------------- | --------: |
+| 3 | LOA 2 (IND)   | b159b1dfe41e78c15fb8711382cb2bc7 |  5.200000 |
+| 4 | ALBIMER (IND) | de79fac70dcebbc2db1f63a978729012 |  4.800000 |
+| 2 | LOA 7 (IND)   | 4a9c06e32670db8fa44b4263898c7028 |  4.266667 |
+| 1 | COLLEN (IND)  | 07946c6c27e325d71496283118ac469b |  0.400000 |
 
 Agrupar los datos por décimas de grados Lat y Lon, sumar horas totales
 de actividad y horas de pesca También se bajan los archivos JSON con los

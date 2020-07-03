@@ -99,13 +99,16 @@ Tarapaca_NotFishing_AIS <- subset(Vessels_Clip_Tarapaca_AIS, nnet_score==0 | is.
 
 #Aggregate by vessel, adding fishing hours
 Tarapaca_FH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Tarapaca_Fishing_AIS, sum))
+Tarapaca_FH_AIS <- Tarapaca_FH_AIS[with(Tarapaca_FH_AIS, order(-hours)),]
 #Aggregate by vessel, adding total hours
 Tarapaca_TH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Tarapaca_NotFishing_AIS, sum))
+Tarapaca_TH_AIS <- Tarapaca_TH_AIS[with(Tarapaca_TH_AIS, order(-hours)),]
 
 #Export final list of vessels and associated hours within
 #Tarapaca region
 
-##write.csv(Tarapaca_FH_AIS, file = "Tarapaca_Horas_de_Pesca_AIS.csv")
+# write.csv(Tarapaca_FH_AIS, file = "Tarapaca_Horas_de_Pesca_AIS.csv")
+# write.csv(Tarapaca_TH_AIS, file = "Tarapaca_Horas_Totales_AIS.csv")
 ```
 
 Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
@@ -114,38 +117,38 @@ Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
 
 Horas de Pesca
 
-| n\_shipname |     ssvid |    hours |
-| :---------- | --------: | -------: |
-| AUDAZ       | 725000027 | 483.5261 |
-| AVENTURERO  | 725000028 | 493.1778 |
-| INTREPIDO   | 725000029 | 434.6211 |
-| RELAMPAGO   | 725000030 | 121.3153 |
-| SALMON      | 725000192 | 198.8072 |
-| BLANQUILLO  | 725000193 | 332.9961 |
-| HURACAN     | 725000197 | 463.5411 |
-| CORPESCA2   | 725000834 | 483.9828 |
-| MERO        | 725010191 | 434.9903 |
+|   | n\_shipname |     ssvid |    hours |
+| - | :---------- | --------: | -------: |
+| 2 | AVENTURERO  | 725000028 | 493.1778 |
+| 8 | CORPESCA2   | 725000834 | 483.9828 |
+| 1 | AUDAZ       | 725000027 | 483.5261 |
+| 7 | HURACAN     | 725000197 | 463.5411 |
+| 9 | MERO        | 725010191 | 434.9903 |
+| 3 | INTREPIDO   | 725000029 | 434.6211 |
+| 6 | BLANQUILLO  | 725000193 | 332.9961 |
+| 5 | SALMON      | 725000192 | 198.8072 |
+| 4 | RELAMPAGO   | 725000030 | 121.3153 |
 
 Horas Totales
 
-| n\_shipname |     ssvid |      hours |
-| :---------- | --------: | ---------: |
-| MARLIN      | 538006225 |   26.50694 |
-| HALCON      | 548931000 |   64.38639 |
-| ALERCE      | 636018877 |   21.99833 |
-| AUDAZ       | 725000027 | 2714.33611 |
-| AVENTURERO  | 725000028 | 7317.44389 |
-| INTREPIDO   | 725000029 | 2071.56083 |
-| RELAMPAGO   | 725000030 | 2585.30417 |
-| SALMON      | 725000192 | 7098.53056 |
-| BLANQUILLO  | 725000193 | 6058.03889 |
-| HURACAN     | 725000197 | 8347.62278 |
-| CORPESCA2   | 725000834 | 6923.44167 |
-| TORNADO     | 725001850 |  764.58833 |
-| MERO        | 725010191 | 5038.82250 |
-| ALBIMER     | 725019300 |   16.00000 |
-| INTREPIDO   | 845409485 |    8.00000 |
-| INTREPIDO   | 999999999 |  179.29944 |
+|    | n\_shipname |     ssvid |      hours |
+| -- | :---------- | --------: | ---------: |
+| 10 | HURACAN     | 725000197 | 8347.62278 |
+| 5  | AVENTURERO  | 725000028 | 7317.44389 |
+| 8  | SALMON      | 725000192 | 7098.53056 |
+| 11 | CORPESCA2   | 725000834 | 6923.44167 |
+| 9  | BLANQUILLO  | 725000193 | 6058.03889 |
+| 13 | MERO        | 725010191 | 5038.82250 |
+| 4  | AUDAZ       | 725000027 | 2714.33611 |
+| 7  | RELAMPAGO   | 725000030 | 2585.30417 |
+| 6  | INTREPIDO   | 725000029 | 2071.56083 |
+| 12 | TORNADO     | 725001850 |  764.58833 |
+| 16 | INTREPIDO   | 999999999 |  179.29944 |
+| 2  | HALCON      | 548931000 |   64.38639 |
+| 1  | MARLIN      | 538006225 |   26.50694 |
+| 3  | ALERCE      | 636018877 |   21.99833 |
+| 14 | ALBIMER     | 725019300 |   16.00000 |
+| 15 | INTREPIDO   | 845409485 |    8.00000 |
 
 ``` r
 ##### 2.) PISAGUA
@@ -159,45 +162,48 @@ Pisagua_NotFishing_AIS <- subset(Vessels_Clip_Pisagua_AIS, nnet_score==0 | is.na
 
 #Aggregate by vessel, adding fishing hours
 Pisagua_FH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Pisagua_Fishing_AIS, sum))
+Pisagua_FH_AIS <- Pisagua_FH_AIS[with(Pisagua_FH_AIS, order(-hours)),]
 #Aggregate by vessel, adding total hours
 Pisagua_TH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Pisagua_NotFishing_AIS, sum))
+Pisagua_TH_AIS <- Pisagua_TH_AIS[with(Pisagua_TH_AIS, order(-hours)),]
 
 #Export final list of vessels and associated hours within
 #Pisagua region
 
-##write.csv(Pisagua_FH_AIS, file = "Pisagua_Horas_de_Pesca_AIS.csv")
+# write.csv(Pisagua_FH_AIS, file = "Pisagua_Horas_de_Pesca_AIS.csv")
+# write.csv(Pisagua_TH_AIS, file = "Pisagua_Horas_Totales_AIS.csv")
 ```
 
 **Pisagua**
 
 Horas de Pesca
 
-| n\_shipname |     ssvid |     hours |
-| :---------- | --------: | --------: |
-| AUDAZ       | 725000027 | 39.243889 |
-| AVENTURERO  | 725000028 | 39.096667 |
-| INTREPIDO   | 725000029 | 32.569167 |
-| RELAMPAGO   | 725000030 |  3.873333 |
-| SALMON      | 725000192 | 18.667778 |
-| BLANQUILLO  | 725000193 | 24.556111 |
-| HURACAN     | 725000197 | 73.155000 |
-| CORPESCA2   | 725000834 | 58.068333 |
-| MERO        | 725010191 | 52.458056 |
+|   | n\_shipname |     ssvid |     hours |
+| - | :---------- | --------: | --------: |
+| 7 | HURACAN     | 725000197 | 73.155000 |
+| 8 | CORPESCA2   | 725000834 | 58.068333 |
+| 9 | MERO        | 725010191 | 52.458056 |
+| 1 | AUDAZ       | 725000027 | 39.243889 |
+| 2 | AVENTURERO  | 725000028 | 39.096667 |
+| 3 | INTREPIDO   | 725000029 | 32.569167 |
+| 6 | BLANQUILLO  | 725000193 | 24.556111 |
+| 5 | SALMON      | 725000192 | 18.667778 |
+| 4 | RELAMPAGO   | 725000030 |  3.873333 |
 
 Horas Totales
 
-| n\_shipname |     ssvid |    hours |
-| :---------- | --------: | -------: |
-| AUDAZ       | 725000027 | 161.7631 |
-| AVENTURERO  | 725000028 | 169.4069 |
-| INTREPIDO   | 725000029 | 134.8528 |
-| RELAMPAGO   | 725000030 |  27.6750 |
-| SALMON      | 725000192 | 145.5164 |
-| BLANQUILLO  | 725000193 | 130.8317 |
-| HURACAN     | 725000197 | 175.8556 |
-| CORPESCA2   | 725000834 | 167.3397 |
-| MERO        | 725010191 | 151.8208 |
-| INTREPIDO   | 999999999 |  16.0000 |
+|    | n\_shipname |     ssvid |    hours |
+| -- | :---------- | --------: | -------: |
+| 7  | HURACAN     | 725000197 | 175.8556 |
+| 2  | AVENTURERO  | 725000028 | 169.4069 |
+| 8  | CORPESCA2   | 725000834 | 167.3397 |
+| 1  | AUDAZ       | 725000027 | 161.7631 |
+| 9  | MERO        | 725010191 | 151.8208 |
+| 5  | SALMON      | 725000192 | 145.5164 |
+| 3  | INTREPIDO   | 725000029 | 134.8528 |
+| 6  | BLANQUILLO  | 725000193 | 130.8317 |
+| 4  | RELAMPAGO   | 725000030 |  27.6750 |
+| 10 | INTREPIDO   | 999999999 |  16.0000 |
 
 **Ventana 5**
 
@@ -214,11 +220,12 @@ Vessels_Clip_V6_AIS$n_shipname <- AISChileVessels_SSVID$n_shipname[match(Vessels
 
 #Aggregate by vessel, adding total hours
 V6_TH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Vessels_Clip_V6_AIS, sum))
+V6_TH_AIS <- V6_TH_AIS[with(V6_TH_AIS, order(-hours)),]
 
 #Export final list of vessels and associated hours within
 #V6 region
 
-##write.csv(V6_TH_AIS, file = "V6_Horas_Totales_AIS.csv")
+# write.csv(V6_TH_AIS, file = "V6_Horas_Totales_AIS.csv")
 ```
 
 **Ventana 6**
