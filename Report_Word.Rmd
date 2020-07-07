@@ -1,0 +1,397 @@
+---
+title: "Reporte Preliminar Oceana Chile AMP Pisagua"
+author: "Esteban Arenas"
+date: "7/3/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, results='hide', include=FALSE}
+library(lubridate)
+library(geojsonio)
+library(sf)
+library(tidyverse)
+#library(dplyr)
+#library(ggmap)
+#library(maps)
+library(knitr)
+library(fishwatchr)
+library(extrafont)
+library(png)
+library(grid)
+loadfonts()
+
+Pisagua_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/Pisagua.geojson")
+#Tarapacá
+Tarapaca_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/TarapacaPoly.geojson")
+#Ventana 5
+Ventana5_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP5gj.geojson")
+#Ventana 6
+Ventana6_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP6gj.geojson")
+#Ventana 7
+Ventana7_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Shapes/VP7intersectgj.geojson")
+
+```
+
+![](/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Docs/GFW_logo_primary_RGB_50.png)
+&nbsp;
+
+## Resumen
+En este documento se muestran los resultados usando tres distintas bases de datos (AIS, VMS y los datos publicados en la plataforma de GFW) para evaluar el esfuerzo pesquero de embarcaciones anchoveteras industriales especificadas por Oceana Chile. El análisis se llevó a cabo para 51 embarcaciones evaluadas del 1 de febrero del 2019 al 13 de junio del 2020. El esfuerzo pesquero y horas totales se miden dentro de tres áreas de interés para Oceana Chile: la región marina de Tarapacá, Pisagua (AMP propuesta por Oceana Chile) y las ventanas de pesca número 5, 6 y 7. \   
+
+&nbsp;
+
+Los resultados sugieren que no hay pesca dentro de ninguna de las ventanas. Este hallazgo es el mismo para las tres bases de datos. Notamos que las horas de pesca varían ligeramente, en orden descendiente, con el mayor número de horas en los datos publicados, seguido de AIS y VMS con el menor número de horas. Sin embargo, VMS es la base que más datos tiene, seguido de los datos publicados y de AIS. Esto se puede observar particularmente en las tres ventanas; se observan horas totales dentro las tres ventanas para algunas embarcaciones con los datos VMS, con los datos AIS solamente se observan horas totales de una embarcación dentro de la ventana 6 y con los datos publicados no se observan horas totales de ninguna embarcación dentro de ninguna de las ventanas. \   
+
+&nbsp;
+
+A continuación se presentan mapas y tablas con el esfuerzo pesquero y horas totales, por embarcaciones especificadas, dentro de la región marina de Tarapacá, Pisagua (AMP propuesta por Oceana Chile) y las ventanas de pesca número 5, 6 y 7. Este análisis es útil para identificar el esfuerzo pesquero y horas totales de tránsito de la flota industrial de anchoveta dentro del área de Tarapacá, Pisagua y las ventanas de penetración dentro de Pisagua. Usando esta evaluación de 51 embarcaciones del 1 de febrero del 2019 al 13 de junio del 2020, uno puede estimar el impacto a la pesca industrial de anchoveta en Chile que resultaría si el área de Pisagua se denomina área marina protegida.
+
+&nbsp;
+
+
+## Mapas
+Mapas por área de **Horas de Pesca** y **Horas Totales** por embarcación.
+Se presentan resultados de las tres bases de datos que se usaron: VMS, AIS, Datos Publicados en la Plataforma de GFW
+
+## Tarapacá VMS
+**Horas de Pesca VMS**
+```{r, eval=TRUE, echo=FALSE, dpi=300}
+# GFW logo
+gfw_logo <- png::readPNG("/Users/Esteban/Documents/Jobs/GFW/General/Logo/GFW_logo_primary_White.png")
+gfw_logo_rast <- grid::rasterGrob(gfw_logo, interpolate = T)
+#Bajar los archivos JSON con los polígonos de interés
+#Tarapaca
+FishingHoursGraph_VMS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/FishingHoursGraph_VMS.csv", header = TRUE)
+
+#Map
+land_sf <- rnaturalearth::ne_countries(scale = 10, returnclass = 'sf')
+MapTest <- ggplot() + 
+  geom_sf(data = land_sf,
+            fill = fishwatchr::gfw_palettes$map_country_dark[1],
+            color = fishwatchr::gfw_palettes$map_country_dark[2],
+          size=.1) +
+    scale_fill_gradientn(colours = fishwatchr::gfw_palettes$map_effort_dark)+
+  fishwatchr::theme_gfw_map(theme = 'dark')+
+  geom_tile(data = FishingHoursGraph_VMS, aes(x = LonBin, y = LatBin, fill = FishingHours), alpha = 0.5)+
+  labs(fill = "Horas", title = "Horas de Pesca por Área en VMS")+
+  geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
+  geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
+  geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
+  coord_sf(xlim = c(-74, -69.8), ylim = c(-22, -18.6))+
+  #Add GFW logo
+  annotation_custom(gfw_logo_rast,
+                      ymin = -21.95,
+                      ymax = -21.53,
+                      xmin = -73.8,
+                      xmax = -72.6)
+MapTest
+
+```
+
+```{r, echo=FALSE}
+##### 1.) TARAPACA
+Tarapaca_Horas_de_Pesca_VMS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/Tarapaca_Horas_de_Pesca_VMS.csv", header = TRUE)
+
+Tarapaca_Horas_Totales_VMS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/Tarapaca_Horas_Totales_VMS.csv", header = TRUE)
+
+```
+
+**Horas de Pesca VMS**
+```{r,echo=FALSE, results='asis'}
+kable(head(Tarapaca_Horas_de_Pesca_VMS,n=10))
+```
+
+&nbsp;
+
+
+**Horas Totales VMS**                  
+```{r,echo=FALSE, results='asis'}
+kable(head(Tarapaca_Horas_Totales_VMS, n =10))
+```
+
+## Pisagua, Ventana 5, 6 y 7 VMS
+**Horas de Pesca VMS**
+```{r, eval=TRUE, echo=FALSE, dpi=300}
+#Zoomed in Pisagua fishing hours map
+MapTest2 <- ggplot() + 
+  geom_sf(data = land_sf,
+            fill = fishwatchr::gfw_palettes$map_country_dark[1],
+            color = fishwatchr::gfw_palettes$map_country_dark[2],
+          size=.1) +
+    scale_fill_gradientn(colours = fishwatchr::gfw_palettes$map_effort_dark)+
+  fishwatchr::theme_gfw_map(theme = 'dark')+
+  geom_tile(data = FishingHoursGraph_VMS, aes(x = LonBin, y = LatBin, fill = FishingHours), alpha = 0.5)+
+  labs(fill = "Horas", title = "Horas de Pesca por Área en VMS")+
+  geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
+  geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
+  geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
+  coord_sf(xlim = c(-70.5, -70.1), ylim = c(-19.87, -19.3))+
+  #Add GFW logo
+  annotation_custom(gfw_logo_rast,
+                      ymin = -21.95,
+                      ymax = -21.53,
+                      xmin = -73.8,
+                      xmax = -72.6)
+MapTest2
+```
+
+```{r, echo=FALSE}
+##### 2.) Pisagua
+Pisagua_Horas_de_Pesca_VMS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/Pisagua_Horas_de_Pesca_VMS.csv", header = TRUE)
+
+Pisagua_Horas_Totales_VMS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/Pisagua_Horas_Totales_VMS.csv", header = TRUE)
+
+##### 3.) V5
+V5_Horas_Totales_VMS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/V5_Horas_Totales_VMS.csv", header = TRUE)
+
+##### 4.) V6
+V6_Horas_Totales_VMS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/V6_Horas_Totales_VMS.csv", header = TRUE)
+
+##### 5.) V7
+V7_Horas_Totales_VMS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/V7_Horas_Totales_VMS.csv", header = TRUE)
+
+```
+
+**Pisagua Horas de Pesca VMS**
+```{r,echo=FALSE, results='asis'}
+kable(head(Pisagua_Horas_de_Pesca_VMS,n=10))
+```
+
+&nbsp;
+
+
+**Pisagua Horas Totales VMS**                  
+```{r,echo=FALSE, results='asis'}
+kable(head(Pisagua_Horas_Totales_VMS, n =10))
+```
+
+&nbsp;
+
+
+**Ventana 5 Horas Totales VMS** \   
+No hay actividad pesquera en esta ventana
+```{r,echo=FALSE, results='asis'}
+kable(head(V5_Horas_Totales_VMS, n =10))
+```
+
+&nbsp;
+
+
+**Ventana 6 Horas Totales VMS** \   
+No hay actividad pesquera en esta ventana
+```{r,echo=FALSE, results='asis'}
+kable(head(V6_Horas_Totales_VMS, n =10))
+```
+
+
+&nbsp;
+
+
+**Ventana 7 Horas Totales VMS** \   
+No hay actividad pesquera en esta ventana
+```{r,echo=FALSE, results='asis'}
+kable(head(V7_Horas_Totales_VMS, n =10))
+```
+
+## Tarapacá Datos Publicados GFW
+**Horas de Pesca Datos Publicados GFW**
+```{r, eval=TRUE, echo=FALSE, dpi=300}
+#Tarapacá
+FishingHoursGraph_Published <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/FishingHoursGraph_Published.csv", header = TRUE)
+
+#Map
+MapTest_Published <- ggplot() + 
+  geom_sf(data = land_sf,
+            fill = fishwatchr::gfw_palettes$map_country_dark[1],
+            color = fishwatchr::gfw_palettes$map_country_dark[2],
+          size=.1) +
+    scale_fill_gradientn(colours = fishwatchr::gfw_palettes$map_effort_dark)+
+  fishwatchr::theme_gfw_map(theme = 'dark')+
+  geom_tile(data = FishingHoursGraph_Published, aes(x = LonBin, y = LatBin, fill = hours), alpha = 0.5)+
+  labs(fill = "Horas", title = "Horas de Pesca por Área en Datos Publicados de GFW")+
+  geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
+  geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
+  geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
+  coord_sf(xlim = c(-74, -69.8), ylim = c(-22, -18.6))+
+  #Add GFW logo
+  annotation_custom(gfw_logo_rast,
+                      ymin = -21.95,
+                      ymax = -21.53,
+                      xmin = -73.8,
+                      xmax = -72.6)
+MapTest_Published
+
+```
+
+```{r, echo=FALSE}
+##### 1.) TARAPACA
+Tarapaca_Horas_de_Pesca_Published <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/Tarapaca_Horas_de_Pesca_Published.csv", header = TRUE)
+```
+
+**Horas de Pesca Datos Publicados GFW**
+```{r,echo=FALSE, results='asis'}
+kable(head(Tarapaca_Horas_de_Pesca_Published,n=10))
+```
+
+## Pisagua, Ventana 5, 6 y 7 Datos Publicados GFW
+**Horas de Pesca Datos Publicados GFW**
+```{r, eval=TRUE, echo=FALSE, dpi=300}
+#Zoomed in Pisagua fishing hours map
+MapTest2_Published <- ggplot() + 
+  geom_sf(data = land_sf,
+            fill = fishwatchr::gfw_palettes$map_country_dark[1],
+            color = fishwatchr::gfw_palettes$map_country_dark[2],
+          size=.1) +
+    scale_fill_gradientn(colours = fishwatchr::gfw_palettes$map_effort_dark)+
+  fishwatchr::theme_gfw_map(theme = 'dark')+
+  geom_tile(data = FishingHoursGraph_Published, aes(x = LonBin, y = LatBin, fill = hours), alpha = 0.5)+
+  labs(fill = "Horas", title = "Horas de Pesca por Área en Datos Publicados de GFW")+
+  geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
+  geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
+  geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
+  coord_sf(xlim = c(-70.5, -70.1), ylim = c(-19.87, -19.3))+
+  #Add GFW logo
+  annotation_custom(gfw_logo_rast,
+                      ymin = -21.95,
+                      ymax = -21.53,
+                      xmin = -73.8,
+                      xmax = -72.6)
+
+MapTest2_Published
+```
+
+```{r, echo=FALSE}
+##### 2.) Pisagua
+Pisagua_Horas_de_Pesca_Published <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/Pisagua_Horas_de_Pesca_Published.csv", header = TRUE)
+```
+
+**Pisagua Horas de Pesca Datos Publicados GFW**
+```{r,echo=FALSE, results='asis'}
+kable(head(Pisagua_Horas_de_Pesca_Published,n=10))
+```
+
+&nbsp;
+
+
+**Ventana 5, 6 y 7 Horas de Pesca Datos Publicados GFW** \   
+No hay actividad pesquera en ninguna de las ventanas
+
+&nbsp;
+
+## Tarapacá AIS
+**Horas de Pesca AIS**
+```{r, eval=TRUE, echo=FALSE, dpi=300}
+#Tarapacá
+FishingHoursGraph_AIS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/FishingHoursGraph_AIS.csv", header = TRUE)
+
+#Map
+MapTest_AIS <- ggplot() + 
+  geom_sf(data = land_sf,
+            fill = fishwatchr::gfw_palettes$map_country_dark[1],
+            color = fishwatchr::gfw_palettes$map_country_dark[2],
+          size=.1) +
+    scale_fill_gradientn(colours = fishwatchr::gfw_palettes$map_effort_dark)+
+  fishwatchr::theme_gfw_map(theme = 'dark')+
+  geom_tile(data = FishingHoursGraph_AIS, aes(x = LonBin, y = LatBin, fill = hours), alpha = 0.5)+
+  labs(fill = "Horas", title = "Horas de Pesca por Área en AIS")+
+  geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
+  geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
+  geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
+  coord_sf(xlim = c(-74, -69.8), ylim = c(-22, -18.6))+
+  #Add GFW logo
+  annotation_custom(gfw_logo_rast,
+                      ymin = -21.95,
+                      ymax = -21.53,
+                      xmin = -73.8,
+                      xmax = -72.6)
+MapTest_AIS
+
+```
+
+```{r, echo=FALSE}
+##### 1.) TARAPACA
+Tarapaca_Horas_de_Pesca_AIS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/Tarapaca_Horas_de_Pesca_AIS.csv", header = TRUE)
+
+Tarapaca_Horas_Totales_AIS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/Tarapaca_Horas_Totales_AIS.csv", header = TRUE)
+
+```
+
+**Horas de Pesca AIS**
+```{r,echo=FALSE, results='asis'}
+kable(head(Tarapaca_Horas_de_Pesca_AIS,n=10))
+```
+
+&nbsp;
+
+
+**Horas Totales AIS**                  
+```{r,echo=FALSE, results='asis'}
+kable(head(Tarapaca_Horas_Totales_AIS, n =10))
+```
+
+&nbsp;
+
+
+## Pisagua, Ventana 5, 6 y 7 AIS
+**Horas de Pesca AIS**
+```{r, eval=TRUE, echo=FALSE, dpi=300, warning=FALSE}
+#Zoomed in Pisagua fishing hours map
+MapTest2_AIS <- ggplot() + 
+  geom_sf(data = land_sf,
+            fill = fishwatchr::gfw_palettes$map_country_dark[1],
+            color = fishwatchr::gfw_palettes$map_country_dark[2],
+          size=.1) +
+    scale_fill_gradientn(colours = fishwatchr::gfw_palettes$map_effort_dark)+
+  fishwatchr::theme_gfw_map(theme = 'dark')+
+  geom_tile(data = FishingHoursGraph_AIS, aes(x = LonBin, y = LatBin, fill = hours), alpha = 0.5)+
+  labs(fill = "Horas", title = "Horas de Pesca por Área en AIS")+
+  geom_sf(data=Tarapaca_ST,fill=NA, color="#CC3A8E")+geom_sf(data=Pisagua_ST, fill=NA, color="#00C1E7")+
+  geom_sf(data=Ventana5_ST, fill=NA, color="#99C945")+geom_sf(data=Ventana6_ST, fill=NA, color="#DAA51B")+
+  geom_sf(data=Ventana7_ST, fill=NA, color="#58E8C6")+
+  coord_sf(xlim = c(-70.5, -70.1), ylim = c(-19.87, -19.3))+
+  #Add GFW logo
+  annotation_custom(gfw_logo_rast,
+                      ymin = -21.95,
+                      ymax = -21.53,
+                      xmin = -73.8,
+                      xmax = -72.6)
+
+MapTest2_AIS
+
+```
+
+```{r, echo=FALSE}
+##### 2.) Pisagua
+Pisagua_Horas_de_Pesca_AIS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/Pisagua_Horas_de_Pesca_AIS.csv", header = TRUE)
+
+Pisagua_Horas_Totales_AIS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/Pisagua_Horas_Totales_AIS.csv", header = TRUE)
+
+##### 3.) V6
+V6_Horas_Totales_AIS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/V6_Horas_Totales_AIS.csv", header = TRUE)
+
+```
+
+**Pisagua Horas de Pesca AIS**
+```{r,echo=FALSE, results='asis'}
+kable(head(Pisagua_Horas_de_Pesca_AIS,n=10))
+```
+
+&nbsp;
+
+**Pisagua Horas Totales AIS**
+```{r,echo=FALSE, results='asis'}
+kable(head(Pisagua_Horas_Totales_AIS,n=10))
+```
+
+&nbsp;
+
+**Ventana 6 Horas Totales AIS** \   
+No hay horas de pesca ni totales para el resto de las ventanas
+```{r,echo=FALSE, results='asis'}
+kable(head(V6_Horas_Totales_AIS,n=10))
+```
+

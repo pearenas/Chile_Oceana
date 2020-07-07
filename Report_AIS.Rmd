@@ -99,6 +99,9 @@ AIS_Data_Copy <- copy(AIS_Data)
 #This file includes AIS fishing hours and total hours for all VMS available vessels of interest to Oceana Chile.
 #Around 6 thousand rows for an estimated 22 vessels between 2019-02-01 and 2020-06-13
 write.csv(AIS_Data_Copy, file = "AIS_Data.csv")
+############################################ START - "AIS_Data.csv" saved used for cropping
+#AIS_Data <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/AIS_Data.csv", header = TRUE)
+
 ```
 
 **"AIS_Data.csv"** is exported and clipped in QGIS according to each region. This file includes AIS fishing hours and total hours for all VMS available vessels of interest to Oceana Chile. This is around 6 thousand rows for an estimated 22 vessels between 2019-02-01 and 2020-06-13
@@ -106,6 +109,7 @@ write.csv(AIS_Data_Copy, file = "AIS_Data.csv")
 Clipped versions of the file, according to polygons of interest, are then imported below: Tarapacá, Pisagua, Ventana 5, 6 y 7
 
 ```{r, echo=TRUE}
+UniqueVessNames <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/UniqueVessNames.csv", header = TRUE)
 #And then imported once again as the files below
 AISChileVessels_SSVID <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/AISChileVessels_SSVID.csv", header = TRUE)
 ##### 1.) TARAPACA
@@ -119,16 +123,29 @@ Tarapaca_NotFishing_AIS <- subset(Vessels_Clip_Tarapaca_AIS, nnet_score==0 | is.
 
 #Aggregate by vessel, adding fishing hours
 Tarapaca_FH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Tarapaca_Fishing_AIS, sum))
-Tarapaca_FH_AIS <- Tarapaca_FH_AIS[with(Tarapaca_FH_AIS, order(-hours)),]
+#Add associated vessel name
+Tarapaca_FH_AIS$Embarcacion <- UniqueVessNames$shipname[match(Tarapaca_FH_AIS$n_shipname, UniqueVessNames$n_shipname)]
+Tarapaca_FH_AIS$Horas <- Tarapaca_FH_AIS$hours
+#Removing ID rows
+Tarapaca_FH_AIS <- Tarapaca_FH_AIS[-c(1:3)]
+#Order from highest to lowest hours
+Tarapaca_FH_AIS <- Tarapaca_FH_AIS[with(Tarapaca_FH_AIS, order(-Horas)),]
+
 #Aggregate by vessel, adding total hours
 Tarapaca_TH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Tarapaca_NotFishing_AIS, sum))
-Tarapaca_TH_AIS <- Tarapaca_TH_AIS[with(Tarapaca_TH_AIS, order(-hours)),]
+#Add associated vessel name
+Tarapaca_TH_AIS$Embarcacion <- UniqueVessNames$shipname[match(Tarapaca_TH_AIS$n_shipname, UniqueVessNames$n_shipname)]
+Tarapaca_TH_AIS$Horas <- Tarapaca_TH_AIS$hours
+#Removing ID rows
+Tarapaca_TH_AIS <- Tarapaca_TH_AIS[-c(1:3)]
+#Order from highest to lowest hours
+Tarapaca_TH_AIS <- Tarapaca_TH_AIS[with(Tarapaca_TH_AIS, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #Tarapaca region
 
-# write.csv(Tarapaca_FH_AIS, file = "Tarapaca_Horas_de_Pesca_AIS.csv")
-# write.csv(Tarapaca_TH_AIS, file = "Tarapaca_Horas_Totales_AIS.csv")
+#write.csv(Tarapaca_FH_AIS, file = "Tarapaca_Horas_de_Pesca_AIS.csv")
+#write.csv(Tarapaca_TH_AIS, file = "Tarapaca_Horas_Totales_AIS.csv")
 
 ```
 
@@ -158,16 +175,29 @@ Pisagua_NotFishing_AIS <- subset(Vessels_Clip_Pisagua_AIS, nnet_score==0 | is.na
 
 #Aggregate by vessel, adding fishing hours
 Pisagua_FH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Pisagua_Fishing_AIS, sum))
-Pisagua_FH_AIS <- Pisagua_FH_AIS[with(Pisagua_FH_AIS, order(-hours)),]
+#Add associated vessel name
+Pisagua_FH_AIS$Embarcacion <- UniqueVessNames$shipname[match(Pisagua_FH_AIS$n_shipname, UniqueVessNames$n_shipname)]
+Pisagua_FH_AIS$Horas <- Pisagua_FH_AIS$hours
+#Removing ID rows
+Pisagua_FH_AIS <- Pisagua_FH_AIS[-c(1:3)]
+#Order from highest to lowest hours
+Pisagua_FH_AIS <- Pisagua_FH_AIS[with(Pisagua_FH_AIS, order(-Horas)),]
+
 #Aggregate by vessel, adding total hours
 Pisagua_TH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Pisagua_NotFishing_AIS, sum))
-Pisagua_TH_AIS <- Pisagua_TH_AIS[with(Pisagua_TH_AIS, order(-hours)),]
+#Add associated vessel name
+Pisagua_TH_AIS$Embarcacion <- UniqueVessNames$shipname[match(Pisagua_TH_AIS$n_shipname, UniqueVessNames$n_shipname)]
+Pisagua_TH_AIS$Horas <- Pisagua_TH_AIS$hours
+#Removing ID rows
+Pisagua_TH_AIS <- Pisagua_TH_AIS[-c(1:3)]
+#Order from highest to lowest hours
+Pisagua_TH_AIS <- Pisagua_TH_AIS[with(Pisagua_TH_AIS, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #Pisagua region
 
-# write.csv(Pisagua_FH_AIS, file = "Pisagua_Horas_de_Pesca_AIS.csv")
-# write.csv(Pisagua_TH_AIS, file = "Pisagua_Horas_Totales_AIS.csv")
+#write.csv(Pisagua_FH_AIS, file = "Pisagua_Horas_de_Pesca_AIS.csv")
+#write.csv(Pisagua_TH_AIS, file = "Pisagua_Horas_Totales_AIS.csv")
 
 ```
 
@@ -199,12 +229,18 @@ Vessels_Clip_V6_AIS$n_shipname <- AISChileVessels_SSVID$n_shipname[match(Vessels
 
 #Aggregate by vessel, adding total hours
 V6_TH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Vessels_Clip_V6_AIS, sum))
-V6_TH_AIS <- V6_TH_AIS[with(V6_TH_AIS, order(-hours)),]
+#Add associated vessel name
+V6_TH_AIS$Embarcacion <- UniqueVessNames$shipname[match(V6_TH_AIS$n_shipname, UniqueVessNames$n_shipname)]
+V6_TH_AIS$Horas <- V6_TH_AIS$hours
+#Removing ID rows
+V6_TH_AIS <- V6_TH_AIS[-c(1:3)]
+#Order from highest to lowest hours
+V6_TH_AIS <- V6_TH_AIS[with(V6_TH_AIS, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #V6 region
 
-# write.csv(V6_TH_AIS, file = "V6_Horas_Totales_AIS.csv")
+#write.csv(V6_TH_AIS, file = "V6_Horas_Totales_AIS.csv")
 ```
 
 **Ventana 6**
@@ -241,6 +277,9 @@ TotalHoursGraph_AIS <- data.frame(aggregate(hours ~ LatBin + LonBin, Tarapaca_No
 #Se quitan 400 lineas (outliers) de valores > 5 (1.9% de los datos) para que el mapa 
 #muestre resultados útiles
 TotalHoursGraph_AIS <- TotalHoursGraph_AIS[which(TotalHoursGraph_AIS$hours < 5),]
+
+# write.csv(FishingHoursGraph_AIS, file = "FishingHoursGraph_AIS.csv")
+# write.csv(TotalHoursGraph_AIS, file = "TotalHoursGraph_AIS.csv")
 
 ###Mapa
 #Bajar los archivos JSON con los polígonos de interés

@@ -78,10 +78,16 @@ La base de arriba después se sube a Big Query y es una de las bases que corre e
 Chile que estén dentro del PDF que nos dio Oceana Chile
 
 ```{mysql connection = con, output.var = "PDF_Vessels_2020", eval=FALSE}
+WITH
+JOINED AS (
 SELECT seg_id,shipname,timestamp,lat,lon,speed,ssvid,callsign,source,n_shipname,nnet_score
 FROM `world-fishing-827.pipe_chile_production_v20200331.messages_scored_*`
 INNER JOIN `world-fishing-827.scratch_Esteban.Chile_Desired_Ind_Vessels`
   ON `world-fishing-827.pipe_chile_production_v20200331.messages_scored_*`.n_shipname = `world-fishing-827.scratch_Esteban.Chile_Desired_Ind_Vessels`.Nave
+)
+SELECT *
+FROM JOINED
+WHERE lat > -22 and lat < -18.6 and lon > -74 and lon < -69.8
 ```
 
 PDF_Vessels_2020 es la base de datos que se obtiene del query y el resto del proceso se explica en los comentarios del código
@@ -127,10 +133,13 @@ PDF_Vessels_Total$FishingHours <- Tmp
 
 #Resulting file is exported, clipped in QGIS according to each region,
 #This file includes fishing hours for all VMS Chile vessels. Around 8 million rows
-write.csv(PDF_Vessels_Total, file = "PDF_Vessels_Total.csv")
+#write.csv(PDF_Vessels_Total, file = "VMS_Data.csv")
+############################################ START - "VMS_Data.csv" saved used for cropping
+#VMS_Data <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/VMS_Data.csv", header = TRUE)
+
 ```
 
-**"PDF_Vessels_Total.csv"** is exported and clipped in QGIS according to each region. This file includes fishing hours for all VMS Chile vessels. Around 8 million rows
+**"VMS_Data.csv"** is exported and clipped in QGIS according to each region. This file includes fishing hours for all VMS Chile vessels. Around 3 million rows
 
 Clipped versions of the file, according to polygons of interest, are then imported below: Tarapacá, Pisagua, Ventana 5, 6 y 7
 
@@ -141,16 +150,29 @@ Vessels_Clip_Tarapaca <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/
 
 #Aggregate by vessel, adding fishing hours
 Tarapaca_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_Tarapaca, sum))
-Tarapaca_FH <- Tarapaca_FH[with(Tarapaca_FH, order(-FishingHours)),]
+#Change column names
+colnames(Tarapaca_FH)[1] <- "Embarcacion"
+colnames(Tarapaca_FH)[3] <- "Horas"
+#Removing ID rows
+Tarapaca_FH <- Tarapaca_FH[-2]
+#Order from highest to lowest hours
+Tarapaca_FH <- Tarapaca_FH[with(Tarapaca_FH, order(-Horas)),]
 
+#Aggregate by vessel, adding total hours
 Tarapaca_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_Tarapaca, sum))
-Tarapaca_TH <- Tarapaca_TH[with(Tarapaca_TH, order(-Hrs_Diff)),]
+#Change column names
+colnames(Tarapaca_TH)[1] <- "Embarcacion"
+colnames(Tarapaca_TH)[3] <- "Horas"
+#Removing ID rows
+Tarapaca_TH <- Tarapaca_TH[-2]
+#Order from highest to lowest hours
+Tarapaca_TH <- Tarapaca_TH[with(Tarapaca_TH, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #Tarapaca region
 
-# write.csv(Tarapaca_FH, file = "Tarapaca_Horas_de_Pesca_VMS.csv")
-# write.csv(Tarapaca_TH, file = "Tarapaca_Horas_Totales_VMS.csv")
+#write.csv(Tarapaca_FH, file = "Tarapaca_Horas_de_Pesca_VMS.csv")
+#write.csv(Tarapaca_TH, file = "Tarapaca_Horas_Totales_VMS.csv")
 
 ```
 
@@ -174,16 +196,29 @@ Vessels_Clip_Pisagua <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/C
 
 #Aggregate by vessel, adding fishing hours
 Pisagua_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_Pisagua, sum))
-Pisagua_FH <- Pisagua_FH[with(Pisagua_FH, order(-FishingHours)),]
+#Change column names
+colnames(Pisagua_FH)[1] <- "Embarcacion"
+colnames(Pisagua_FH)[3] <- "Horas"
+#Removing ID rows
+Pisagua_FH <- Pisagua_FH[-2]
+#Order from highest to lowest hours
+Pisagua_FH <- Pisagua_FH[with(Pisagua_FH, order(-Horas)),]
 
+#Aggregate by vessel, adding total hours
 Pisagua_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_Pisagua, sum))
-Pisagua_TH <- Pisagua_TH[with(Pisagua_TH, order(-Hrs_Diff)),]
+#Change column names
+colnames(Pisagua_TH)[1] <- "Embarcacion"
+colnames(Pisagua_TH)[3] <- "Horas"
+#Removing ID rows
+Pisagua_TH <- Pisagua_TH[-2]
+#Order from highest to lowest hours
+Pisagua_TH <- Pisagua_TH[with(Pisagua_TH, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #Pisagua MPA
 
-# write.csv(Pisagua_FH, file = "Pisagua_Horas_de_Pesca_VMS.csv")
-# write.csv(Pisagua_TH, file = "Pisagua_Horas_Totales_VMS.csv")
+#write.csv(Pisagua_FH, file = "Pisagua_Horas_de_Pesca_VMS.csv")
+#write.csv(Pisagua_TH, file = "Pisagua_Horas_Totales_VMS.csv")
 
 ```
 
@@ -206,16 +241,29 @@ Vessels_Clip_V5 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/
 
 #Aggregate by vessel, adding fishing hours
 V5_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V5, sum))
-V5_FH <- V5_FH[with(V5_FH, order(-FishingHours)),]
+#Change column names
+colnames(V5_FH)[1] <- "Embarcacion"
+colnames(V5_FH)[3] <- "Horas"
+#Removing ID rows
+V5_FH <- V5_FH[-2]
+#Order from highest to lowest hours
+V5_FH <- V5_FH[with(V5_FH, order(-Horas)),]
 
+#Aggregate by vessel, adding total hours
 V5_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_V5, sum))
-V5_TH <- V5_TH[with(V5_TH, order(-Hrs_Diff)),]
+#Change column names
+colnames(V5_TH)[1] <- "Embarcacion"
+colnames(V5_TH)[3] <- "Horas"
+#Removing ID rows
+V5_TH <- V5_TH[-2]
+#Order from highest to lowest hours
+V5_TH <- V5_TH[with(V5_TH, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #Ventana 5
 
-# write.csv(V5_FH, file = "V5_Horas_de_Pesca_VMS.csv")
-# write.csv(V5_TH, file = "V5_Horas_Totales_VMS.csv")
+#write.csv(V5_FH, file = "V5_Horas_de_Pesca_VMS.csv")
+#write.csv(V5_TH, file = "V5_Horas_Totales_VMS.csv")
 
 ```
 
@@ -237,10 +285,23 @@ Vessels_Clip_V6 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/
 
 #Aggregate by vessel, adding fishing hours
 V6_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V6, sum))
-V6_FH <- V6_FH[with(V6_FH, order(-FishingHours)),]
+#Change column names
+colnames(V6_FH)[1] <- "Embarcacion"
+colnames(V6_FH)[3] <- "Horas"
+#Removing ID rows
+V6_FH <- V6_FH[-2]
+#Order from highest to lowest hours
+V6_FH <- V6_FH[with(V6_FH, order(-Horas)),]
 
+#Aggregate by vessel, adding total hours
 V6_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_V6, sum))
-V6_TH <- V6_TH[with(V6_TH, order(-Hrs_Diff)),]
+#Change column names
+colnames(V6_TH)[1] <- "Embarcacion"
+colnames(V6_TH)[3] <- "Horas"
+#Removing ID rows
+V6_TH <- V6_TH[-2]
+#Order from highest to lowest hours
+V6_TH <- V6_TH[with(V6_TH, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #Ventana 6
@@ -268,10 +329,23 @@ Vessels_Clip_V7 <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/
 
 #Aggregate by vessel, adding fishing hours
 V7_FH <- data.frame(aggregate(FishingHours ~ shipname + ssvid, Vessels_Clip_V7, sum))
-V7_FH <- V7_FH[with(V7_FH, order(-FishingHours)),]
+#Change column names
+colnames(V7_FH)[1] <- "Embarcacion"
+colnames(V7_FH)[3] <- "Horas"
+#Removing ID rows
+V7_FH <- V7_FH[-2]
+#Order from highest to lowest hours
+V7_FH <- V7_FH[with(V7_FH, order(-Horas)),]
 
+#Aggregate by vessel, adding total hours
 V7_TH <- data.frame(aggregate(Hrs_Diff ~ shipname + ssvid, Vessels_Clip_V7, sum))
-V7_TH <- V7_TH[with(V7_TH, order(-Hrs_Diff)),]
+#Change column names
+colnames(V7_TH)[1] <- "Embarcacion"
+colnames(V7_TH)[3] <- "Horas"
+#Removing ID rows
+V7_TH <- V7_TH[-2]
+#Order from highest to lowest hours
+V7_TH <- V7_TH[with(V7_TH, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #Ventana 7
@@ -311,6 +385,9 @@ TotalHoursGraph <- data.frame(aggregate(Hrs_Diff ~ LatBin + LonBin, Vessels_Clip
 #Se quitan 58 lineas (outliers) de valores > 50 (.176% de los datos) para que el mapa 
 #muestre resultados útiles
 TotalHoursGraph <- TotalHoursGraph[which(TotalHoursGraph$Hrs_Diff < 50),]
+
+# write.csv(FishingHoursGraph, file = "FishingHoursGraph_VMS.csv")
+# write.csv(TotalHoursGraph, file = "TotalHoursGraph_VMS.csv")
 
 ###Mapa
 #Bajar los archivos JSON con los polígonos de interés

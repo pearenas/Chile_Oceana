@@ -46,10 +46,10 @@ INNER JOIN `world-fishing-827.scratch_Esteban.UniqueVessNames_`
 write.csv(Vessel_id, file = "Vessel_id.csv")
 ```
 
-```{mysql connection = con, output.var = "Published_Data", eval=FALSE}
+```{mysql connection = con, output.var = "Published_Data",eval=FALSE}
 WITH
 JOINED AS (
-SELECT event_type,vessel_id,event_start,event_end,lat_mean,lon_mean
+SELECT event_type,vessel_id,event_start,event_end,lat_mean,lon_mean,lat_min,lat_max,lon_min,lon_max
 FROM `world-fishing-827.pipe_chile_production_v20200331.published_events_fishing`
 INNER JOIN `world-fishing-827.scratch_Esteban.Vessel_id`
   ON `world-fishing-827.pipe_chile_production_v20200331.published_events_fishing`.vessel_id = `world-fishing-827.scratch_Esteban.Vessel_id`.vessel_id_2
@@ -58,7 +58,7 @@ SELECT *
 FROM JOINED
 WHERE event_start BETWEEN TIMESTAMP('2019-02-01')
 AND TIMESTAMP('2020-06-13')
-AND lat_mean > -22 and lat_mean < -18.6 and lon_mean > -74 and lon_mean < -69.8
+AND lat_min > -22 and lat_max < -18.6 and lon_min > -74 and lon_max < -69.8
 ```
 
 ```{r, eval=FALSE, echo=TRUE}
@@ -80,9 +80,12 @@ Published_Data_Copy$hours <- (Published_Data_Copy$EpochSec_End - Published_Data_
 #This file includes published fishing hours for all VMS available vessels of interest to Oceana Chile.
 #Around 18 thousand rows for vessels between 2019-02-01 and 2020-06-13
 write.csv(Published_Data_Copy, file = "Published_Data.csv")
+############################################ START - "Published_Data.csv" saved used for cropping
+#Published_Data <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Published_Data.csv", header = TRUE)
+
 ```
 
-**"Published_Data.csv"** is exported and clipped in QGIS according to each region. This file includes Published fishing hours for all VMS available vessels of interest to Oceana Chile. This is around 8 thousand rows for vessels between 2019-02-01 and 2020-06-13
+**"Published_Data.csv"** is exported and clipped in QGIS according to each region. This file includes Published fishing hours for all VMS available vessels of interest to Oceana Chile. This is around 18 thousand rows for vessels between 2019-02-01 and 2020-06-13
 
 Clipped versions of the file, according to polygons of interest, are then imported below: Tarapacá and Pisagua
 
@@ -90,14 +93,22 @@ Clipped versions of the file, according to polygons of interest, are then import
 ##### 1.) TARAPACA
 Vessels_Clip_Tarapaca_Published <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/Vessels_Clip_Tarapaca_Published.csv", header = TRUE)
 
+UniqueVessNames <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/UniqueVessNames.csv", header = TRUE)
+
 #Aggregate by vessel, adding fishing hours
 Tarapaca_FH_Published <- data.frame(aggregate(hours ~ n_shipname + vessel_id, Vessels_Clip_Tarapaca_Published, sum))
-Tarapaca_FH_Published <- Tarapaca_FH_Published[with(Tarapaca_FH_Published, order(-hours)),]
+#Add associated vessel name
+Tarapaca_FH_Published$Embarcacion <- UniqueVessNames$shipname[match(Tarapaca_FH_Published$n_shipname, UniqueVessNames$n_shipname)]
+Tarapaca_FH_Published$Horas <- Tarapaca_FH_Published$hours
+#Removing ID rows
+Tarapaca_FH_Published <- Tarapaca_FH_Published[-c(1:3)]
+#Order from highest to lowest hours
+Tarapaca_FH_Published <- Tarapaca_FH_Published[with(Tarapaca_FH_Published, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #Tarapaca region
 
-##rite.csv(Tarapaca_FH_Published, file = "Tarapaca_Horas_de_Pesca_Published.csv")
+#write.csv(Tarapaca_FH_Published, file = "Tarapaca_Horas_de_Pesca_Published.csv")
 ```
 
 Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
@@ -115,12 +126,18 @@ Vessels_Clip_Pisagua_Published <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/P
 
 #Aggregate by vessel, adding fishing hours
 Pisagua_FH_Published <- data.frame(aggregate(hours ~ n_shipname + vessel_id, Vessels_Clip_Pisagua_Published, sum))
-Pisagua_FH_Published <- Pisagua_FH_Published[with(Pisagua_FH_Published, order(-hours)),]
+#Add associated vessel name
+Pisagua_FH_Published$Embarcacion <- UniqueVessNames$shipname[match(Pisagua_FH_Published$n_shipname, UniqueVessNames$n_shipname)]
+Pisagua_FH_Published$Horas <- Pisagua_FH_Published$hours
+#Removing ID rows
+Pisagua_FH_Published <- Pisagua_FH_Published[-c(1:3)]
+#Order from highest to lowest hours
+Pisagua_FH_Published <- Pisagua_FH_Published[with(Pisagua_FH_Published, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #Pisagua region
 
-##write.csv(Pisagua_FH_Published, file = "Pisagua_Horas_de_Pesca_Published.csv")
+#write.csv(Pisagua_FH_Published, file = "Pisagua_Horas_de_Pesca_Published.csv")
 ```
 
 **Pisagua**
@@ -154,9 +171,11 @@ Vessels_Clip_Tarapaca_Published$LonBin <- (floor(Vessels_Clip_Tarapaca_Published
 
 #Fishing hours Graph
 FishingHoursGraph_Published <- data.frame(aggregate(hours ~ LatBin + LonBin, Vessels_Clip_Tarapaca_Published, sum))
-#Se quitan 37 lineas (outliers) de valores > 20 (.54% de los datos) para que el mapa 
+#Se quitan 36 lineas (outliers) de valores > 20 (.53% de los datos) para que el mapa 
 #muestre resultados útiles
 FishingHoursGraph_Published <- FishingHoursGraph_Published[which(FishingHoursGraph_Published$hours < 20),]
+
+#write.csv(FishingHoursGraph_Published, file = "FishingHoursGraph_Published.csv")
 
 ###Mapa
 #Bajar los archivos JSON con los polígonos de interés

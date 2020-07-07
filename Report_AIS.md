@@ -75,6 +75,8 @@ AIS_Data_Copy <- copy(AIS_Data)
 #This file includes AIS fishing hours and total hours for all VMS available vessels of interest to Oceana Chile.
 #Around 6 thousand rows for an estimated 22 vessels between 2019-02-01 and 2020-06-13
 write.csv(AIS_Data_Copy, file = "AIS_Data.csv")
+############################################ START - "AIS_Data.csv" saved used for cropping
+#AIS_Data <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Final_Report/Tables/FullData/AIS_Data.csv", header = TRUE)
 ```
 
 **“AIS\_Data.csv”** is exported and clipped in QGIS according to each
@@ -86,6 +88,7 @@ Clipped versions of the file, according to polygons of interest, are
 then imported below: Tarapacá, Pisagua, Ventana 5, 6 y 7
 
 ``` r
+UniqueVessNames <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/UniqueVessNames.csv", header = TRUE)
 #And then imported once again as the files below
 AISChileVessels_SSVID <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/AISChileVessels_SSVID.csv", header = TRUE)
 ##### 1.) TARAPACA
@@ -99,16 +102,29 @@ Tarapaca_NotFishing_AIS <- subset(Vessels_Clip_Tarapaca_AIS, nnet_score==0 | is.
 
 #Aggregate by vessel, adding fishing hours
 Tarapaca_FH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Tarapaca_Fishing_AIS, sum))
-Tarapaca_FH_AIS <- Tarapaca_FH_AIS[with(Tarapaca_FH_AIS, order(-hours)),]
+#Add associated vessel name
+Tarapaca_FH_AIS$Embarcacion <- UniqueVessNames$shipname[match(Tarapaca_FH_AIS$n_shipname, UniqueVessNames$n_shipname)]
+Tarapaca_FH_AIS$Horas <- Tarapaca_FH_AIS$hours
+#Removing ID rows
+Tarapaca_FH_AIS <- Tarapaca_FH_AIS[-c(1:3)]
+#Order from highest to lowest hours
+Tarapaca_FH_AIS <- Tarapaca_FH_AIS[with(Tarapaca_FH_AIS, order(-Horas)),]
+
 #Aggregate by vessel, adding total hours
 Tarapaca_TH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Tarapaca_NotFishing_AIS, sum))
-Tarapaca_TH_AIS <- Tarapaca_TH_AIS[with(Tarapaca_TH_AIS, order(-hours)),]
+#Add associated vessel name
+Tarapaca_TH_AIS$Embarcacion <- UniqueVessNames$shipname[match(Tarapaca_TH_AIS$n_shipname, UniqueVessNames$n_shipname)]
+Tarapaca_TH_AIS$Horas <- Tarapaca_TH_AIS$hours
+#Removing ID rows
+Tarapaca_TH_AIS <- Tarapaca_TH_AIS[-c(1:3)]
+#Order from highest to lowest hours
+Tarapaca_TH_AIS <- Tarapaca_TH_AIS[with(Tarapaca_TH_AIS, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #Tarapaca region
 
-# write.csv(Tarapaca_FH_AIS, file = "Tarapaca_Horas_de_Pesca_AIS.csv")
-# write.csv(Tarapaca_TH_AIS, file = "Tarapaca_Horas_Totales_AIS.csv")
+#write.csv(Tarapaca_FH_AIS, file = "Tarapaca_Horas_de_Pesca_AIS.csv")
+#write.csv(Tarapaca_TH_AIS, file = "Tarapaca_Horas_Totales_AIS.csv")
 ```
 
 Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
@@ -117,38 +133,38 @@ Resultados en horas de esfuerzo pesquero de las distintas áreas debajo
 
 Horas de Pesca
 
-|   | n\_shipname |     ssvid |    hours |
-| - | :---------- | --------: | -------: |
-| 2 | AVENTURERO  | 725000028 | 493.1778 |
-| 8 | CORPESCA2   | 725000834 | 483.9828 |
-| 1 | AUDAZ       | 725000027 | 483.5261 |
-| 7 | HURACAN     | 725000197 | 463.5411 |
-| 9 | MERO        | 725010191 | 434.9903 |
-| 3 | INTREPIDO   | 725000029 | 434.6211 |
-| 6 | BLANQUILLO  | 725000193 | 332.9961 |
-| 5 | SALMON      | 725000192 | 198.8072 |
-| 4 | RELAMPAGO   | 725000030 | 121.3153 |
+|   | Embarcacion      |    Horas |
+| - | :--------------- | -------: |
+| 2 | AVENTURERO (IND) | 493.1778 |
+| 8 | CORPESCA 2 (IND) | 483.9828 |
+| 1 | AUDAZ (IND)      | 483.5261 |
+| 7 | HURACAN (IND)    | 463.5411 |
+| 9 | MERO (IND)       | 434.9903 |
+| 3 | INTREPIDO (IND)  | 434.6211 |
+| 6 | BLANQUILLO (IND) | 332.9961 |
+| 5 | SALMON (IND)     | 198.8072 |
+| 4 | RELAMPAGO (IND)  | 121.3153 |
 
 Horas Totales
 
-|    | n\_shipname |     ssvid |      hours |
-| -- | :---------- | --------: | ---------: |
-| 10 | HURACAN     | 725000197 | 8347.62278 |
-| 5  | AVENTURERO  | 725000028 | 7317.44389 |
-| 8  | SALMON      | 725000192 | 7098.53056 |
-| 11 | CORPESCA2   | 725000834 | 6923.44167 |
-| 9  | BLANQUILLO  | 725000193 | 6058.03889 |
-| 13 | MERO        | 725010191 | 5038.82250 |
-| 4  | AUDAZ       | 725000027 | 2714.33611 |
-| 7  | RELAMPAGO   | 725000030 | 2585.30417 |
-| 6  | INTREPIDO   | 725000029 | 2071.56083 |
-| 12 | TORNADO     | 725001850 |  764.58833 |
-| 16 | INTREPIDO   | 999999999 |  179.29944 |
-| 2  | HALCON      | 548931000 |   64.38639 |
-| 1  | MARLIN      | 538006225 |   26.50694 |
-| 3  | ALERCE      | 636018877 |   21.99833 |
-| 14 | ALBIMER     | 725019300 |   16.00000 |
-| 15 | INTREPIDO   | 845409485 |    8.00000 |
+|    | Embarcacion      |      Horas |
+| -- | :--------------- | ---------: |
+| 10 | HURACAN (IND)    | 8347.62278 |
+| 5  | AVENTURERO (IND) | 7317.44389 |
+| 8  | SALMON (IND)     | 7098.53056 |
+| 11 | CORPESCA 2 (IND) | 6923.44167 |
+| 9  | BLANQUILLO (IND) | 6058.03889 |
+| 13 | MERO (IND)       | 5038.82250 |
+| 4  | AUDAZ (IND)      | 2714.33611 |
+| 7  | RELAMPAGO (IND)  | 2585.30417 |
+| 6  | INTREPIDO (IND)  | 2071.56083 |
+| 12 | TORNADO (IND)    |  764.58833 |
+| 16 | INTREPIDO (IND)  |  179.29944 |
+| 2  | HALCON (IND)     |   64.38639 |
+| 1  | MARLIN (IND)     |   26.50694 |
+| 3  | ALERCE (IND)     |   21.99833 |
+| 14 | ALBIMER (IND)    |   16.00000 |
+| 15 | INTREPIDO (IND)  |    8.00000 |
 
 ``` r
 ##### 2.) PISAGUA
@@ -162,48 +178,61 @@ Pisagua_NotFishing_AIS <- subset(Vessels_Clip_Pisagua_AIS, nnet_score==0 | is.na
 
 #Aggregate by vessel, adding fishing hours
 Pisagua_FH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Pisagua_Fishing_AIS, sum))
-Pisagua_FH_AIS <- Pisagua_FH_AIS[with(Pisagua_FH_AIS, order(-hours)),]
+#Add associated vessel name
+Pisagua_FH_AIS$Embarcacion <- UniqueVessNames$shipname[match(Pisagua_FH_AIS$n_shipname, UniqueVessNames$n_shipname)]
+Pisagua_FH_AIS$Horas <- Pisagua_FH_AIS$hours
+#Removing ID rows
+Pisagua_FH_AIS <- Pisagua_FH_AIS[-c(1:3)]
+#Order from highest to lowest hours
+Pisagua_FH_AIS <- Pisagua_FH_AIS[with(Pisagua_FH_AIS, order(-Horas)),]
+
 #Aggregate by vessel, adding total hours
 Pisagua_TH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Pisagua_NotFishing_AIS, sum))
-Pisagua_TH_AIS <- Pisagua_TH_AIS[with(Pisagua_TH_AIS, order(-hours)),]
+#Add associated vessel name
+Pisagua_TH_AIS$Embarcacion <- UniqueVessNames$shipname[match(Pisagua_TH_AIS$n_shipname, UniqueVessNames$n_shipname)]
+Pisagua_TH_AIS$Horas <- Pisagua_TH_AIS$hours
+#Removing ID rows
+Pisagua_TH_AIS <- Pisagua_TH_AIS[-c(1:3)]
+#Order from highest to lowest hours
+Pisagua_TH_AIS <- Pisagua_TH_AIS[with(Pisagua_TH_AIS, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #Pisagua region
 
-# write.csv(Pisagua_FH_AIS, file = "Pisagua_Horas_de_Pesca_AIS.csv")
-# write.csv(Pisagua_TH_AIS, file = "Pisagua_Horas_Totales_AIS.csv")
+#write.csv(Pisagua_FH_AIS, file = "Pisagua_Horas_de_Pesca_AIS.csv")
+#write.csv(Pisagua_TH_AIS, file = "Pisagua_Horas_Totales_AIS.csv")
 ```
 
 **Pisagua**
 
 Horas de Pesca
 
-|   | n\_shipname |     ssvid |     hours |
-| - | :---------- | --------: | --------: |
-| 7 | HURACAN     | 725000197 | 73.155000 |
-| 8 | CORPESCA2   | 725000834 | 58.068333 |
-| 9 | MERO        | 725010191 | 52.458056 |
-| 1 | AUDAZ       | 725000027 | 39.243889 |
-| 2 | AVENTURERO  | 725000028 | 39.096667 |
-| 3 | INTREPIDO   | 725000029 | 32.569167 |
-| 6 | BLANQUILLO  | 725000193 | 24.556111 |
-| 5 | SALMON      | 725000192 | 18.667778 |
-| 4 | RELAMPAGO   | 725000030 |  3.873333 |
+|   | Embarcacion      |     Horas |
+| - | :--------------- | --------: |
+| 7 | HURACAN (IND)    | 73.155000 |
+| 8 | CORPESCA 2 (IND) | 58.068333 |
+| 9 | MERO (IND)       | 52.458056 |
+| 1 | AUDAZ (IND)      | 39.243889 |
+| 2 | AVENTURERO (IND) | 39.096667 |
+| 3 | INTREPIDO (IND)  | 32.569167 |
+| 6 | BLANQUILLO (IND) | 24.556111 |
+| 5 | SALMON (IND)     | 18.667778 |
+| 4 | RELAMPAGO (IND)  |  3.873333 |
 
 Horas Totales
 
-|    | n\_shipname |     ssvid |    hours |
-| -- | :---------- | --------: | -------: |
-| 7  | HURACAN     | 725000197 | 175.8556 |
-| 2  | AVENTURERO  | 725000028 | 169.4069 |
-| 8  | CORPESCA2   | 725000834 | 167.3397 |
-| 1  | AUDAZ       | 725000027 | 161.7631 |
-| 9  | MERO        | 725010191 | 151.8208 |
-| 5  | SALMON      | 725000192 | 145.5164 |
-| 3  | INTREPIDO   | 725000029 | 134.8528 |
-| 6  | BLANQUILLO  | 725000193 | 130.8317 |
-| 4  | RELAMPAGO   | 725000030 |  27.6750 |
-| 10 | INTREPIDO   | 999999999 |  16.0000 |
+|    | Embarcacion      |    Horas |
+| -- | :--------------- | -------: |
+| 7  | HURACAN (IND)    | 175.8556 |
+| 2  | AVENTURERO (IND) | 169.4069 |
+| 8  | CORPESCA 2 (IND) | 167.3397 |
+| 1  | AUDAZ (IND)      | 161.7631 |
+| 9  | MERO (IND)       | 151.8208 |
+| 5  | SALMON (IND)     | 145.5164 |
+| 3  | INTREPIDO (IND)  | 134.8528 |
+| 6  | BLANQUILLO (IND) | 130.8317 |
+| 4  | RELAMPAGO (IND)  |  27.6750 |
+| 10 | INTREPIDO (IND)  |  16.0000 |
 
 **Ventana 5**
 
@@ -220,12 +249,18 @@ Vessels_Clip_V6_AIS$n_shipname <- AISChileVessels_SSVID$n_shipname[match(Vessels
 
 #Aggregate by vessel, adding total hours
 V6_TH_AIS <- data.frame(aggregate(hours ~ n_shipname + ssvid, Vessels_Clip_V6_AIS, sum))
-V6_TH_AIS <- V6_TH_AIS[with(V6_TH_AIS, order(-hours)),]
+#Add associated vessel name
+V6_TH_AIS$Embarcacion <- UniqueVessNames$shipname[match(V6_TH_AIS$n_shipname, UniqueVessNames$n_shipname)]
+V6_TH_AIS$Horas <- V6_TH_AIS$hours
+#Removing ID rows
+V6_TH_AIS <- V6_TH_AIS[-c(1:3)]
+#Order from highest to lowest hours
+V6_TH_AIS <- V6_TH_AIS[with(V6_TH_AIS, order(-Horas)),]
 
 #Export final list of vessels and associated hours within
 #V6 region
 
-# write.csv(V6_TH_AIS, file = "V6_Horas_Totales_AIS.csv")
+#write.csv(V6_TH_AIS, file = "V6_Horas_Totales_AIS.csv")
 ```
 
 **Ventana 6**
@@ -234,9 +269,9 @@ No Fishing Hours
 
 Total Hours
 
-| n\_shipname |     ssvid |     hours |
-| :---------- | --------: | --------: |
-| HURACAN     | 725000197 | 0.1177778 |
+| Embarcacion   |     Horas |
+| :------------ | --------: |
+| HURACAN (IND) | 0.1177778 |
 
 **Ventana 7**
 
@@ -262,6 +297,9 @@ TotalHoursGraph_AIS <- data.frame(aggregate(hours ~ LatBin + LonBin, Tarapaca_No
 #Se quitan 400 lineas (outliers) de valores > 5 (1.9% de los datos) para que el mapa 
 #muestre resultados útiles
 TotalHoursGraph_AIS <- TotalHoursGraph_AIS[which(TotalHoursGraph_AIS$hours < 5),]
+
+# write.csv(FishingHoursGraph_AIS, file = "FishingHoursGraph_AIS.csv")
+# write.csv(TotalHoursGraph_AIS, file = "TotalHoursGraph_AIS.csv")
 
 ###Mapa
 #Bajar los archivos JSON con los polígonos de interés
