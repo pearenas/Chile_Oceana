@@ -40,22 +40,22 @@ Ventana7_ST <- st_read("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_
 &nbsp;
 
 ## Resumen
-En este documento se muestran los resultados usando tres distintas bases de datos (AIS, VMS y los datos publicados en la plataforma de GFW) para evaluar el esfuerzo pesquero de embarcaciones anchoveteras industriales especificadas por Oceana Chile. El análisis se llevó a cabo para 51 embarcaciones evaluadas del 1 de febrero del 2019 al 13 de junio del 2020. El esfuerzo pesquero y horas totales se miden dentro de tres áreas de interés para Oceana Chile: la región marina de Tarapacá, Pisagua (AMP propuesta por Oceana Chile) y las ventanas de pesca número 5, 6 y 7. \   
+En este documento se muestran los resultados usando tres distintas bases de datos (AIS, VMS y los datos publicados en la plataforma de GFW) para evaluar el esfuerzo pesquero de embarcaciones anchoveteras industriales especificadas por Oceana Chile. El análisis se llevó a cabo para 51 embarcaciones evaluadas del 1 de febrero del 2019 al 13 de junio del 2020. El esfuerzo pesquero y horas totales se miden dentro de tres áreas de interés para Oceana Chile: la región marina de Tarapacá, Pisagua (AMP propuesta por Oceana Chile) y las ventanas de perforación número 5, 6 y 7. \   
 
 &nbsp;
 
-Los resultados sugieren que no hay pesca dentro de ninguna de las ventanas. Este hallazgo es el mismo para las tres bases de datos. Notamos que las horas de pesca varían ligeramente, en orden descendiente, con el mayor número de horas en los datos publicados, seguido de AIS y VMS con el menor número de horas. Sin embargo, VMS es la base que más datos tiene, seguido de los datos publicados y de AIS. Esto se puede observar particularmente en las tres ventanas; se observan horas totales dentro las tres ventanas para algunas embarcaciones con los datos VMS, con los datos AIS solamente se observan horas totales de una embarcación dentro de la ventana 6 y con los datos publicados no se observan horas totales de ninguna embarcación dentro de ninguna de las ventanas. \   
+Conforme a las tres bases de datos analizadas, los resultados sugieren que ninguna de las 51 embarcaciones evaluadas realizan actividades pesqueras dentro de las ventanas de perforación. No obstante lo anterior, en la región marina de Tarapacá y Pisagua  si se identificó actividad pesquera. En ambas regiones las horas de pesca varían ligeramente, en orden descendiente, con el mayor número de horas en los datos publicados, seguido de AIS y VMS con el menor número de horas. Sin embargo, la base de datos VMS es la que mayor información tiene, seguido de los datos publicados y de AIS. Esto se puede observar particularmente en las tres ventanas; se observan horas totales (definido como horas de tránsito de la embarcación) dentro las tres ventanas para algunas embarcaciones con los datos VMS, con los datos AIS solamente se observan horas totales de una embarcación dentro de la ventana 6 y con los datos publicados no se observan horas totales de ninguna embarcación dentro de ninguna de las ventanas.  \   
 
 &nbsp;
 
-A continuación se presentan mapas y tablas con el esfuerzo pesquero y horas totales, por embarcaciones especificadas, dentro de la región marina de Tarapacá, Pisagua (AMP propuesta por Oceana Chile) y las ventanas de pesca número 5, 6 y 7. Este análisis es útil para identificar el esfuerzo pesquero y horas totales de tránsito de la flota industrial de anchoveta dentro del área de Tarapacá, Pisagua y las ventanas de penetración dentro de Pisagua. Usando esta evaluación de 51 embarcaciones del 1 de febrero del 2019 al 13 de junio del 2020, uno puede estimar el impacto a la pesca industrial de anchoveta en Chile que resultaría si el área de Pisagua se denomina área marina protegida.
+A continuación se presentan mapas y tablas con el esfuerzo pesquero y horas totales, por embarcaciones especificadas, dentro de la región marina de Tarapacá, Pisagua (AMP propuesta por Oceana Chile) y las ventanas de perforación número 5, 6 y 7. Este análisis es útil para identificar el esfuerzo pesquero y horas totales de tránsito de la flota industrial de anchoveta dentro del área de Tarapacá, Pisagua y las ventanas de perforación dentro de Pisagua. Usando esta evaluación de 51 embarcaciones del 1 de febrero del 2019 al 13 de junio del 2020,  es posible estimar el impacto a la pesca industrial de anchoveta en Chile que resultaría si el área de Pisagua se denomina área marina protegida.
 
 &nbsp;
 
 
 ## Mapas
 Mapas por área de **Horas de Pesca** y **Horas Totales** por embarcación.
-Se presentan resultados de las tres bases de datos que se usaron: VMS, AIS, Datos Publicados en la Plataforma de GFW
+Se presentan los resultados de las tres bases de datos que se usaron: VMS, AIS y Datos Publicados en la Plataforma de GFW
 
 ## Tarapacá VMS
 **Horas de Pesca VMS**
@@ -172,7 +172,7 @@ kable(head(Pisagua_Horas_Totales_VMS, n =10))
 &nbsp;
 
 
-**Ventana 5 Horas Totales VMS** \   
+**Ventana de perforación 5. Horas Totales VMS** \   
 No hay actividad pesquera en esta ventana
 ```{r,echo=FALSE, results='asis'}
 kable(head(V5_Horas_Totales_VMS, n =10))
@@ -181,7 +181,7 @@ kable(head(V5_Horas_Totales_VMS, n =10))
 &nbsp;
 
 
-**Ventana 6 Horas Totales VMS** \   
+**Ventana de perforación 6. Horas Totales VMS** \   
 No hay actividad pesquera en esta ventana
 ```{r,echo=FALSE, results='asis'}
 kable(head(V6_Horas_Totales_VMS, n =10))
@@ -191,7 +191,7 @@ kable(head(V6_Horas_Totales_VMS, n =10))
 &nbsp;
 
 
-**Ventana 7 Horas Totales VMS** \   
+**Ventana de perforación 7. Horas Totales VMS** \   
 No hay actividad pesquera en esta ventana
 ```{r,echo=FALSE, results='asis'}
 kable(head(V7_Horas_Totales_VMS, n =10))
