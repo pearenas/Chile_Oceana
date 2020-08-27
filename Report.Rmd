@@ -30,6 +30,10 @@ con <- DBI::dbConnect(bigrquery::bigquery(), project = "world-fishing-827", use_
 Nada del código corre dentro de este Rmarkdown pero lo incluyo nada más para que se pueda evaluar la metodología. Este es un reporte preliminar que solo muestra el código usado y los resultados obtenidos. Podremos ir modificándolo para llegar a la versión final.
 
 ```{r}
+# Chile_VMS as:
+# SELECT Nave, RPI
+# FROM `VMS_Chile.vessel_information_industry`
+
 Chile_VMS <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/Chile_VMS.csv", header = TRUE)
 RPI_PDF <- read.csv ("/Users/Esteban/Documents/Jobs/GFW/Proyectos/Chile/Chile_Oceana/Data/RPI.csv", header = TRUE)
 

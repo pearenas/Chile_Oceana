@@ -27,7 +27,7 @@ library(extrafont)
 con <- DBI::dbConnect(bigrquery::bigquery(), project = "world-fishing-827", use_legacy_sql = FALSE)
 ```
 
-**"Vessels_Clip_Tarapaca"** ontains data that has already been extracted from the Chile VMS, worked on to calculate time difference between consecutive points, established which times classify as fishing and which don't, and been clipped to the Tarapacá region of Chile. This process can be found in beginning of the **"Report.Rmd"** file within this repo.
+**"Vessels_Clip_Tarapaca"** contains data that has already been extracted from the Chile VMS, worked on to calculate time difference between consecutive points, established which times classify as fishing and which don't, and been clipped to the Tarapacá region of Chile. This process can be found in beginning of the **"Report.Rmd"** file within this repo.
 
 Group by lat and lon hundreths, add fishing and total hours, and export tables to then calulate Hrs/Km2 using a User Defined Function (UDF)
 
